@@ -1,0 +1,149 @@
+---
+import Section from "./ui/Section.astro";
+import Icon from "./ui/Icon.astro";
+import SolicitudDiagnostico from "./SolicitudDiagnostico.astro";
+import { contact } from "../data/site";
+
+const detailItems = [
+  { icon: "mail", label: "Email", value: contact.email, href: `mailto:${contact.email}` },
+];
+
+const socials = contact.social.filter((item) => item.href);
+---
+
+<Section id="contacto" tone="surface" labelledby="contacto-title">
+  <div class="contact__wrap">
+    <SolicitudDiagnostico />
+  </div>
+
+  <div class="contact__details">
+    <p class="contact__details-title">¿Preferís contactarnos directamente?</p>
+    <ul class="contact-details">
+      {
+        detailItems.map((item) => (
+          <li class="contact-details__item">
+            <span class="contact-details__icon">
+              <Icon name={item.icon} size={18} />
+            </span>
+            {item.href ? (
+              <a href={item.href}>{item.value}</a>
+            ) : (
+              <span>{item.value}</span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      socials.length > 0 && (
+        <ul class="contact__social">
+          {socials.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={item.label}
+              >
+                <Icon name={item.icon} size={20} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</Section>
+
+<style>
+  .contact__wrap {
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .contact__details {
+    max-width: 52rem;
+    margin: var(--space-7) auto 0;
+    text-align: center;
+  }
+
+  .contact__details-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: var(--space-5);
+  }
+
+  .contact-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4) var(--space-6);
+  }
+
+  .contact-details__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .contact-details__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .contact-details__item a {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .contact-details__item a:hover {
+    text-decoration: underline;
+  }
+
+  .contact-details__item span {
+    color: var(--ink-700);
+  }
+
+  .contact__social {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .contact__social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    border: 1px solid var(--color-border);
+    color: var(--brand-800);
+    transition:
+      color var(--transition),
+      border-color var(--transition),
+      transform var(--transition);
+  }
+
+  .contact__social a:hover {
+    color: var(--color-primary);
+    border-color: var(--brand-300);
+    transform: translateY(-2px);
+  }
+</style>

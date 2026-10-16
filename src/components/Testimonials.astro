@@ -1,0 +1,68 @@
+---
+import Section from "./ui/Section.astro";
+import Icon from "./ui/Icon.astro";
+import { testimonials } from "../data/site";
+
+const hasTestimonials = testimonials.length > 0;
+---
+
+{
+  hasTestimonials && (
+    <Section labelledby="testimonios-title">
+      <div class="section-head">
+        <p class="eyebrow">Testimonios</p>
+        <h2 id="testimonios-title">Lo que dicen nuestros clientes</h2>
+      </div>
+
+      <div class="grid grid--3">
+        {testimonials.map((item) => (
+          <figure class="card testimonial">
+            <Icon name="message" size={28} class="testimonial__quote" />
+            <blockquote>{item.quote}</blockquote>
+            <figcaption>
+              <span class="testimonial__author">{item.author}</span>
+              <span class="testimonial__role">
+                {item.role}
+                {item.company ? `, ${item.company}` : ""}
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </Section>
+  )
+}
+
+<style>
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+  }
+
+  .testimonial :global(.testimonial__quote) {
+    color: var(--brand-300);
+  }
+
+  .testimonial blockquote {
+    margin: 0;
+    font-size: var(--text-lg);
+    color: var(--ink-700);
+  }
+
+  .testimonial figcaption {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+  }
+
+  .testimonial__author {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .testimonial__role {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

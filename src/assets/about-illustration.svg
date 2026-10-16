@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#122c45"></stop>
+      <stop offset="1" stop-color="#0284c7"></stop>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.32"></stop>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.08"></stop>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="480" rx="32" fill="url(#sky)"></rect>
+
+  <circle cx="500" cy="120" r="70" fill="#ffffff" fill-opacity="0.08"></circle>
+  <circle cx="120" cy="90" r="90" fill="#ffffff" fill-opacity="0.05"></circle>
+
+  <!-- Edificio izquierdo -->
+  <rect x="96" y="196" width="128" height="240" rx="10" fill="url(#glass)"></rect>
+  <g fill="#ffffff" fill-opacity="0.55">
+    <rect x="116" y="220" width="24" height="24" rx="4"></rect>
+    <rect x="156" y="220" width="24" height="24" rx="4"></rect>
+    <rect x="116" y="262" width="24" height="24" rx="4"></rect>
+    <rect x="156" y="262" width="24" height="24" rx="4"></rect>
+    <rect x="116" y="304" width="24" height="24" rx="4"></rect>
+    <rect x="156" y="304" width="24" height="24" rx="4"></rect>
+  </g>
+
+  <!-- Edificio principal -->
+  <rect x="248" y="120" width="164" height="316" rx="12" fill="url(#glass)"></rect>
+  <g fill="#ffffff" fill-opacity="0.7">
+    <rect x="272" y="148" width="30" height="30" rx="5"></rect>
+    <rect x="316" y="148" width="30" height="30" rx="5"></rect>
+    <rect x="360" y="148" width="30" height="30" rx="5"></rect>
+    <rect x="272" y="196" width="30" height="30" rx="5"></rect>
+    <rect x="316" y="196" width="30" height="30" rx="5"></rect>
+    <rect x="360" y="196" width="30" height="30" rx="5"></rect>
+    <rect x="272" y="244" width="30" height="30" rx="5"></rect>
+    <rect x="316" y="244" width="30" height="30" rx="5"></rect>
+    <rect x="360" y="244" width="30" height="30" rx="5"></rect>
+    <rect x="272" y="292" width="30" height="30" rx="5"></rect>
+    <rect x="316" y="292" width="30" height="30" rx="5"></rect>
+    <rect x="360" y="292" width="30" height="30" rx="5"></rect>
+  </g>
+  <rect x="300" y="356" width="60" height="80" rx="6" fill="#ffffff" fill-opacity="0.85"></rect>
+
+  <!-- Edificio derecho -->
+  <rect x="436" y="232" width="112" height="204" rx="10" fill="url(#glass)"></rect>
+  <g fill="#ffffff" fill-opacity="0.5">
+    <rect x="454" y="256" width="22" height="22" rx="4"></rect>
+    <rect x="492" y="256" width="22" height="22" rx="4"></rect>
+    <rect x="454" y="296" width="22" height="22" rx="4"></rect>
+    <rect x="492" y="296" width="22" height="22" rx="4"></rect>
+    <rect x="454" y="336" width="22" height="22" rx="4"></rect>
+    <rect x="492" y="336" width="22" height="22" rx="4"></rect>
+  </g>
+
+  <!-- Base -->
+  <rect x="64" y="432" width="512" height="8" rx="4" fill="#ffffff" fill-opacity="0.25"></rect>
+
+  <!-- Hoja / acento -->
+  <path d="M486 84c0-26 30-46 68-46 0 38-20 68-46 68a22 22 0 0 1-22-22Z" fill="#38bdf8" fill-opacity="0.95"></path>
+  <path d="M488 86c18-16 34-26 58-32" stroke="#122c45" stroke-width="4" stroke-linecap="round" fill="none"></path>
+</svg>

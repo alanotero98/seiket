@@ -1,0 +1,58 @@
+---
+import Section from "./ui/Section.astro";
+import { clients } from "../data/site";
+
+const hasClients = clients.length > 0;
+---
+
+{
+  hasClients && (
+    <Section tone="surface" tight labelledby="clientes-title">
+      <p id="clientes-title" class="logo-cloud__title">
+        Organizaciones que confían en nosotros
+      </p>
+      <ul class="logo-cloud">
+        {clients.map((client) => (
+          <li class="logo-cloud__item">
+            <img src={client.logo} alt={client.name} width="140" height="40" loading="lazy" decoding="async" />
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+<style>
+  .logo-cloud__title {
+    text-align: center;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  .logo-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6) var(--space-7);
+  }
+
+  .logo-cloud__item img {
+    height: 2.5rem;
+    width: auto;
+    filter: grayscale(1);
+    opacity: 0.65;
+    transition:
+      filter var(--transition),
+      opacity var(--transition);
+  }
+
+  .logo-cloud__item img:hover {
+    filter: none;
+    opacity: 1;
+  }
+</style>

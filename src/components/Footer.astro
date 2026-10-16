@@ -1,0 +1,204 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/Logo_77778.png";
+import Icon from "./ui/Icon.astro";
+import { site, nav, services, contact } from "../data/site";
+
+const year = new Date().getFullYear();
+const socials = contact.social.filter((item) => item.href);
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <span class="footer__logo">
+          <Image
+            src={logo}
+            alt="SEIKET Facility Services"
+            class="footer__logo-img"
+            height={250}
+            format="webp"
+            loading="lazy"
+            decoding="async"
+          />
+        </span>
+        <p class="footer__description">
+          Facility Management, mantenimiento y limpiezas técnicas de alta complejidad para
+          empresas e instituciones.
+        </p>
+        {
+          socials.length > 0 && (
+            <ul class="footer__social">
+              {socials.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label}
+                  >
+                    <Icon name={item.icon} size={20} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+
+      <nav class="footer__col" aria-label="Enlaces del sitio">
+        <h2 class="footer__title">Navegación</h2>
+        <ul class="footer__list">
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav class="footer__col" aria-label="Servicios">
+        <h2 class="footer__title">Servicios</h2>
+        <ul class="footer__list">
+          {
+            services.map((service) => (
+              <li>
+                <a href="#servicios">{service.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <h2 class="footer__title">Contacto</h2>
+        <ul class="footer__list footer__contact">
+          <li>
+            <a href={`mailto:${contact.email}`}><Icon name="mail" size={18} />{contact.email}</a>
+          </li>
+          
+          
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {year} {site.fullName}. Todos los derechos reservados.</p>
+      <a class="footer__top-link" href="#inicio">
+        Volver arriba
+        <span aria-hidden="true">↑</span>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--brand-950);
+    color: var(--color-on-dark);
+    padding-block: clamp(3rem, 6vw, 4.5rem) var(--space-6);
+  }
+
+  .footer :global(a) {
+    color: var(--color-on-dark);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .footer :global(a:hover) {
+    color: var(--accent-400);
+  }
+
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+    gap: var(--space-6);
+    padding-bottom: var(--space-7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .footer__logo-img {
+    height: 10rem;
+    width: auto;
+    display: block;
+  }
+
+  .footer__description {
+    margin-top: var(--space-4);
+    max-width: 22rem;
+    font-size: var(--text-sm);
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer__social {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .footer__social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .footer__title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer__list {
+    display: grid;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .footer__contact a,
+  .footer__contact span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    font-size: var(--text-sm);
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer__top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-weight-medium);
+  }
+
+  @media (max-width: 960px) {
+    .footer__top {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .footer__top {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import Button from "./ui/Button.astro";
+import { cta } from "../data/site";
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta__panel">
+      <div class="cta__content">
+        <h2 id="cta-title">{cta.title}</h2>
+        <p>{cta.description}</p>
+      </div>
+      <div class="cta__actions">
+        <Button href={cta.primary.href} variant="accent" size="lg" icon="arrow-right">
+          {cta.primary.label}
+        </Button>
+        <Button href={cta.secondary.href} variant="outline" size="lg">
+          {cta.secondary.label}
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(3rem, 6vw, 5rem);
+    background: var(--white);
+  }
+
+  .cta__panel {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border-radius: var(--radius-xl);
+    color: var(--color-on-dark);
+    background:
+      radial-gradient(circle at 90% 10%, rgba(55, 199, 176, 0.35), transparent 45%),
+      linear-gradient(140deg, var(--brand-800), var(--brand-950));
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .cta__content {
+    max-width: 34rem;
+  }
+
+  .cta__content h2 {
+    color: var(--white);
+  }
+
+  .cta__content p {
+    margin-top: var(--space-3);
+    color: var(--color-on-dark-muted);
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+</style>

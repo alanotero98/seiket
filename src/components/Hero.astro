@@ -1,0 +1,296 @@
+---
+import Button from "./ui/Button.astro";
+import Icon from "./ui/Icon.astro";
+import { hero } from "../data/site";
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1 id="hero-title">{hero.title}</h1>
+      <p class="hero__lead lead">{hero.description}</p>
+
+      <div class="hero__actions">
+        <Button href={hero.primaryCta.href} icon="arrow-right" size="lg">
+          {hero.primaryCta.label}
+        </Button>
+        <Button href={hero.secondaryCta.href} variant="secondary" size="lg">
+          {hero.secondaryCta.label}
+        </Button>
+      </div>
+
+      <ul class="hero__highlights">
+        {
+          hero.highlights.map((item) => (
+            <li class="hero__highlight">
+              <Icon name={item.icon} size={20} />
+              <span>{item.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <div class="hero__panel">
+        <div class="hero__panel-head">
+          <span class="hero__panel-mark"><Icon name="building" size={20} /></span>
+          <div>
+            <strong>{hero.panel.title}</strong>
+            <span>{hero.panel.subtitle}</span>
+          </div>
+        </div>
+
+        <ul class="hero__panel-list">
+          {
+            hero.panel.items.map((item) => (
+              <li>
+                <span class="hero__panel-icon"><Icon name={item.icon} size={18} /></span>
+                <span>{item.label}</span>
+                <Icon name="check" size={18} class="hero__panel-check" />
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="hero__panel-foot">
+          <div class="hero__avatars">
+            <span></span><span></span><span></span>
+          </div>
+          <span>{hero.panel.foot}</span>
+        </div>
+      </div>
+
+      <div class="hero__badge hero__badge--top">
+        <span class="hero__badge-icon"><Icon name={hero.badges.top.icon} size={18} /></span>
+        <span>{hero.badges.top.label}</span>
+      </div>
+
+      <div class="hero__badge hero__badge--bottom">
+        <span class="hero__badge-icon"><Icon name={hero.badges.bottom.icon} size={18} /></span>
+        <span>{hero.badges.bottom.label}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3.5rem, 6vw, 5.5rem);
+    background:
+      linear-gradient(180deg, var(--brand-50), var(--white) 70%);
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 82% 12%, rgba(24, 171, 151, 0.12), transparent 42%),
+      radial-gradient(circle at 8% 88%, rgba(31, 92, 143, 0.1), transparent 45%);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .hero__lead {
+    margin-top: var(--space-5);
+    max-width: 34rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .hero__highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-5);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .hero__highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--ink-700);
+  }
+
+  .hero__highlight :global(svg) {
+    color: var(--accent-600);
+    flex-shrink: 0;
+  }
+
+  /* Visual */
+  .hero__visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero__panel {
+    position: relative;
+    width: 100%;
+    max-width: 24rem;
+    padding: var(--space-5);
+    background: linear-gradient(160deg, var(--brand-800), var(--brand-950));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    color: var(--white);
+  }
+
+  .hero__panel-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .hero__panel-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(140deg, var(--brand-500), var(--accent-500));
+  }
+
+  .hero__panel-head div {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+
+  .hero__panel-head span {
+    font-size: var(--text-sm);
+    color: var(--color-on-dark-muted);
+  }
+
+  .hero__panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-block: var(--space-4);
+  }
+
+  .hero__panel-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0.75rem 0.85rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.07);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .hero__panel-icon {
+    display: inline-flex;
+    color: var(--accent-400);
+  }
+
+  .hero__panel-list li :global(.hero__panel-check) {
+    margin-left: auto;
+    color: var(--accent-400);
+  }
+
+  .hero__panel-foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: var(--text-sm);
+    color: var(--color-on-dark-muted);
+  }
+
+  .hero__avatars {
+    display: inline-flex;
+  }
+
+  .hero__avatars span {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 2px solid var(--brand-900);
+    background: linear-gradient(140deg, var(--brand-400), var(--accent-500));
+    margin-left: -0.5rem;
+  }
+
+  .hero__avatars span:first-child {
+    margin-left: 0;
+  }
+
+  .hero__badge {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.6rem 0.9rem;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--brand-900);
+    background: var(--white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero__badge-icon {
+    display: inline-flex;
+    color: var(--accent-600);
+  }
+
+  .hero__badge--top {
+    top: 1.5rem;
+    right: -0.75rem;
+  }
+
+  .hero__badge--bottom {
+    bottom: 1.5rem;
+    left: -0.75rem;
+  }
+
+  @media (max-width: 960px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .hero__visual {
+      order: 2;
+      margin-top: var(--space-4);
+    }
+
+    .hero__content {
+      order: 1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero__badge--top {
+      right: 0;
+    }
+
+    .hero__badge--bottom {
+      left: 0;
+    }
+  }
+</style>

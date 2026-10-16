@@ -1,0 +1,61 @@
+---
+import Section from "./ui/Section.astro";
+import Icon from "./ui/Icon.astro";
+import { sectors } from "../data/site";
+---
+
+<Section id="sectores" tone="alt" labelledby="sectores-title">
+  <div class="section-head">
+    <p class="eyebrow">Sectores</p>
+    <h2 id="sectores-title">Un servicio pensado para tu operación</h2>
+    <p class="lead">
+      Trabajamos con organizaciones de rubros distintos que comparten una misma exigencia:
+      que sus instalaciones estén impecables, seguras y funcionando.
+    </p>
+  </div>
+
+  <div class="grid grid--4">
+    {
+      sectors.map((sector) => (
+        <article class="card card--interactive sector">
+          <span class="sector__icon">
+            <Icon name={sector.icon} size={26} />
+          </span>
+          <h3>{sector.title}</h3>
+          <p>{sector.description}</p>
+        </article>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .sector {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    text-align: left;
+  }
+
+  .sector__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(140deg, var(--brand-600), var(--accent-500));
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .sector h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .sector p {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

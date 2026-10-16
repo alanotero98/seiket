@@ -1,0 +1,12 @@
+---
+interface Props {
+  size?: "default" | "narrow";
+  class?: string;
+}
+
+const { size = "default", class: className = "" } = Astro.props;
+---
+
+<div class:list={["container", size === "narrow" && "container--narrow", className]}>
+  <slot />
+</div>

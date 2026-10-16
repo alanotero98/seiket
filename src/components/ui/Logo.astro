@@ -1,0 +1,117 @@
+---
+interface Props {
+  onDark?: boolean;
+  variant?: "horizontal" | "stacked";
+  class?: string;
+}
+
+const { onDark = false, variant = "horizontal", class: className = "" } = Astro.props;
+---
+
+<span class:list={["logo", `logo--${variant}`, onDark && "logo--on-dark", className]}>
+  <!-- Tu Isotipo Circular Real en SVG -->
+  <span class="logo__mark" aria-hidden="true">
+    <svg viewBox="0 0 500 500" fill="none" xmlns="http://w3.org">
+      <!-- Círculo base de fondo con el gradiente de tu marca -->
+      <circle cx="250" cy="250" r="230" fill="url(#seiket-grad)" />
+      <!-- Siluetas / Ondas internas -->
+      <path d="M120 220C180 140 320 120 400 190C350 240 230 210 160 270C110 320 100 390 170 410C240 430 330 380 320 330C260 350 200 340 190 300C180 260 260 260 320 230C380 200 410 240 410 280C410 370 310 440 210 440C110 440 60 340 120 220Z" fill="white"/>
+      <defs>
+        <linearGradient id="seiket-grad" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#4A90E2" />
+          <stop offset="100%" stop-color="#1A4F8B" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </span>
+
+  <!-- Bloque de Texto Corporativo -->
+  <span class="logo__text">
+    <span class="logo__name">SEIKET</span>
+    <span class="logo__sub">Facility Services</span>
+  </span>
+</span>
+
+<style>
+  /* --- Estructura Base Común --- */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .logo__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo__mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .logo__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .logo__name {
+    font-weight: 800;
+    /* Reducido levemente el espaciado para evitar padding fantasma */
+    letter-spacing: 0.12em; 
+    color: #1A4F8B; 
+  }
+
+  .logo__sub {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #4A90E2;
+  }
+
+  /* --- Variante 1: Horizontal (Para el Menú / Navbar) --- */
+  .logo--horizontal {
+    flex-direction: row;
+    gap: 0.8rem;
+  }
+  .logo--horizontal .logo__mark {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+  .logo--horizontal .logo__name {
+    font-size: 1.4rem;
+  }
+  .logo--horizontal .logo__sub {
+    margin-top: 0.2rem;
+    font-size: 0.58rem;
+  }
+
+  /* --- Variante 2: Stacked / Vertical (¡Para la cabecera del Formulario!) --- */
+  .logo--stacked {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  .logo--stacked .logo__mark {
+    width: 5rem; /* El círculo se ve imponente y grande en el formulario */
+    height: 5rem;
+  }
+  .logo--stacked .logo__name {
+    font-size: 1.6rem;
+  }
+  .logo--stacked .logo__sub {
+    margin-top: 0.35rem;
+    font-size: 0.65rem;
+  }
+
+  /* --- Modo Oscuro (On Dark) --- */
+  .logo--on-dark .logo__name {
+    color: #ffffff;
+  }
+  .logo--on-dark .logo__sub {
+    color: #a3c7f7; /* Un celeste suave legible sobre fondo oscuro */
+  }
+</style>

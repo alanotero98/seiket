@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#122c45" />
+      <stop offset="1" stop-color="#0b1c2e" />
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f5c8f" />
+      <stop offset="1" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="1010" cy="120" r="220" fill="#0ea5e9" fill-opacity="0.14" />
+  <circle cx="180" cy="560" r="200" fill="#1f5c8f" fill-opacity="0.16" />
+
+  <rect x="96" y="176" width="96" height="96" rx="24" fill="url(#mark)" />
+  <path d="M144 205l6.9 19.8 19.8 6.9-19.8 6.9L144 258l-6.9-19.4-19.8-6.9 19.8-6.9z" fill="#fff" />
+
+  <text x="96" y="360" fill="#ffffff" font-family="system-ui, 'Segoe UI', Arial, sans-serif" font-size="88" font-weight="800" letter-spacing="16">SEIKET</text>
+  <text x="98" y="404" fill="#38bdf8" font-family="system-ui, 'Segoe UI', Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="10">FACILITY SERVICES</text>
+  <text x="98" y="470" fill="#ffffff" font-family="system-ui, 'Segoe UI', Arial, sans-serif" font-size="30">De la oficina a la industria aeroespacial:</text>
+  <text x="98" y="514" fill="#a9bccd" font-family="system-ui, 'Segoe UI', Arial, sans-serif" font-size="30">precisión técnica en cada superficie.</text>
+</svg>

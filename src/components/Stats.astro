@@ -1,0 +1,46 @@
+---
+import Section from "./ui/Section.astro";
+import { stats } from "../data/site";
+
+const hasStats = stats.length > 0;
+---
+
+{
+  hasStats && (
+    <Section tone="alt" tight labelledby="stats-title">
+      <h2 id="stats-title" class="visually-hidden">
+        SEIKET en números
+      </h2>
+      <dl class="stats">
+        {stats.map((stat) => (
+          <div class="stat">
+            <dt class="stat__value">{stat.value}</dt>
+            <dd class="stat__label">{stat.label}</dd>
+          </div>
+        ))}
+      </dl>
+    </Section>
+  )
+}
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-5);
+    text-align: center;
+  }
+
+  .stat__value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .stat__label {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

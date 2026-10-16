@@ -1,0 +1,89 @@
+---
+import "../styles/global.css";
+import { getImage } from "astro:assets";
+import faviconLogo from "../assets/logo12.png";
+import { site, siteUrl, contact, services } from "../data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = site.defaultTitle,
+  description = site.description,
+  image = site.defaultOgImage,
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl);
+const ogImage = new URL(image, Astro.site ?? siteUrl);
+
+const favicon = await getImage({
+  src: faviconLogo,
+  width: 32,
+  height: 32,
+  format: "png",
+});
+const appleTouchIcon = await getImage({
+  src: faviconLogo,
+  width: 180,
+  height: 180,
+  format: "png",
+});
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.fullName,
+  url: canonical.origin,
+  description: site.description,
+  knowsAbout: services.map((service) => service.title),
+  ...(contact.email && { email: contact.email }),
+  ...(contact.phone && { telephone: contact.phone }),
+  ...(contact.address && {
+    address: { "@type": "PostalAddress", streetAddress: contact.address },
+  }),
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical.href} />
+
+    <link rel="icon" type="image/png" href={favicon.src} sizes="32x32" />
+    <link rel="apple-touch-icon" href={appleTouchIcon.src} />
+    <meta name="theme-color" content={site.themeColor} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.fullName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:locale" content={site.locale} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage.href} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+    <slot />
+  </body>
+</html>

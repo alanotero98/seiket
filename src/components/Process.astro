@@ -1,0 +1,85 @@
+---
+import Section from "./ui/Section.astro";
+import Icon from "./ui/Icon.astro";
+import { process } from "../data/site";
+---
+
+<Section id="proceso" tone="dark" labelledby="proceso-title">
+  <div class="section-head">
+    <p class="eyebrow">Cómo trabajamos</p>
+    <h2 id="proceso-title">Un proceso simple y ordenado</h2>
+    <p class="lead">
+      Desde el relevamiento técnico hasta el control de calidad, trabajamos con protocolos
+      claros en cada etapa del servicio.
+    </p>
+  </div>
+
+  <ol class="process">
+    {
+      process.map((step, index) => (
+        <li class="step">
+          <div class="step__top">
+            <span class="step__number">{String(index + 1).padStart(2, "0")}</span>
+            <span class="step__icon">
+              <Icon name={step.icon} size={22} />
+            </span>
+          </div>
+          <h3>{step.title}</h3>
+          <p>{step.description}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .process {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-5);
+  }
+
+  .step {
+    position: relative;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .step__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .step__number {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-bold);
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: -0.02em;
+  }
+
+  .step__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(140deg, var(--brand-500), var(--accent-500));
+    color: var(--white);
+  }
+
+  .step h3 {
+    font-size: var(--text-lg);
+    color: var(--white);
+  }
+
+  .step p {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-on-dark-muted);
+  }
+</style>

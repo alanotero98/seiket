@@ -1,0 +1,59 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost";
+  size?: "md" | "lg";
+  icon?: string;
+  iconPosition?: "leading" | "trailing";
+  block?: boolean;
+  target?: string;
+  rel?: string;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  href,
+  type = "button",
+  variant = "primary",
+  size = "md",
+  icon,
+  iconPosition = "trailing",
+  block = false,
+  target,
+  rel,
+  ariaLabel,
+  class: className = "",
+} = Astro.props;
+
+const classes = [
+  "btn",
+  `btn--${variant}`,
+  size === "lg" && "btn--lg",
+  block && "btn--block",
+  className,
+];
+
+const Tag = href ? "a" : "button";
+const iconSize = size === "lg" ? 20 : 18;
+---
+
+<Tag
+  class:list={classes}
+  href={href}
+  type={href ? undefined : type}
+  target={target}
+  rel={target === "_blank" ? "noopener noreferrer" : rel}
+  aria-label={ariaLabel}
+>
+  {icon && iconPosition === "leading" && <Icon name={icon} size={iconSize} />}
+  <slot />
+  {
+    icon && iconPosition === "trailing" && (
+      <Icon name={icon} size={iconSize} class="btn__icon btn__icon--trailing" />
+    )
+  }
+</Tag>
