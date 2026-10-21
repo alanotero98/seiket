@@ -17,7 +17,7 @@ const socials = contact.social.filter((item) => item.href);
             src={logo}
             alt="SEIKET Facility Services"
             class="footer__logo-img"
-            height={250}
+            width={760}
             format="webp"
             loading="lazy"
             decoding="async"
@@ -120,14 +120,30 @@ const socials = contact.social.filter((item) => item.href);
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
 
+  /* El logo original (2400x1792) tiene mucho padding transparente: la banda
+     visible mide ~2108x392 (centrada). El contenedor recorta y centra el
+     <img> agrandado para mostrar solo la marca, sin el espacio muerto.
+     Alto visible: 2.75rem (desktop) / 2.25rem (móvil). El ancho se limita
+     al 100% del contenedor para no desbordar la columna ni el viewport. */
+  .footer__logo {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 15rem;
+    height: 2.75rem;
+    overflow: hidden;
+  }
+
   .footer__logo-img {
-    height: 10rem;
-    width: auto;
     display: block;
+    flex: none;
+    height: calc(2.75rem * 4.571); /* 1792 / 392 ≈ 4.571 */
+    width: auto;
+    max-width: none;
   }
 
   .footer__description {
-    margin-top: var(--space-4);
+    margin-top: var(--space-5);
     max-width: 22rem;
     font-size: var(--text-sm);
     color: var(--color-on-dark-muted);
@@ -201,6 +217,14 @@ const socials = contact.social.filter((item) => item.href);
   @media (max-width: 560px) {
     .footer__top {
       grid-template-columns: 1fr;
+    }
+
+    .footer__logo {
+      height: 2.25rem;
+    }
+
+    .footer__logo-img {
+      height: calc(2.25rem * 4.571);
     }
   }
 </style>

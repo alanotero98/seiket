@@ -79,26 +79,34 @@ import { nav } from "../data/site";
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-    min-height: var(--header-height);
-    padding-top: var(--space-1);
-    padding-bottom: var(--space-1);
+    height: var(--header-height);
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
+  /* El logo original (2400x1792) tiene mucho padding transparente alrededor
+     de la marca (la banda visible mide ~2108x392, centrada verticalmente).
+     Agrandamos el <img> y lo recortamos con el contenedor para que la marca
+     se vea grande sin tocar el alto del header (fijo en --header-height). */
   .header__brand {
     display: inline-flex;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
     text-decoration: none;
     border-radius: var(--radius-sm);
   }
 
   .header__logo {
     display: block;
-    height: 3rem;
+    height: calc(var(--header-height) * 2.6);
     width: auto;
+    max-width: none;
   }
 
   @media (max-width: 640px) {
     .header__logo {
-      height: 2.75rem;
+      height: calc(var(--header-height) * 2.3);
     }
   }
 

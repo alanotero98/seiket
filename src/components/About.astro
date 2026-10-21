@@ -7,6 +7,8 @@ import cleaning from "../assets/oficina.jpg";
 import paneles from "../assets/panelessolares.avif";
 import industrial from "../assets/facilityservices.png";
 import equipo from "../assets/nosotros.jpg";
+import equipo2 from "../assets/about-us-2.jpg";
+import equipo3 from "../assets/about-us-3.jpg";
 
 const pilares = [
   {
@@ -15,6 +17,26 @@ const pilares = [
     description: "Procesos documentados.",
   },
   ...about.values,
+];
+
+// Carrusel de pilares: tres imágenes verticales que intercambian posición.
+// Reutiliza los recursos existentes (no se agregan rutas nuevas).
+const carousel = [
+  {
+    src: equipo,
+    alt: "Profesional de SEIKET durante una intervención de mantenimiento técnico.",
+    position: "pos-center",
+  },
+  {
+    src: equipo2,
+    alt: "Equipo de SEIKET en una instalación corporativa.",
+    position: "pos-right",
+  },
+  {
+    src: equipo3,
+    alt: "Tareas de mantenimiento técnico en una instalación.",
+    position: "pos-left",
+  },
 ];
 
 const gallery = [
@@ -102,15 +124,34 @@ const gallery = [
   <div class="about__bottom">
     <div class="container about__bottom-grid">
       <div class="about__figure" data-reveal-item style="--i: 0">
-        <Image
-          src={equipo}
-          alt="Profesional de SEIKET durante una intervención de mantenimiento técnico."
-          widths={[420, 640]}
-          sizes="(max-width: 900px) 100vw, 40vw"
-          loading="lazy"
-          decoding="async"
-          class="about__figure-img"
-        />
+        <div
+          class="about__carousel"
+          data-about-carousel
+          role="group"
+          aria-roledescription="carrusel"
+          aria-label="Galería de pilares corporativos"
+        >
+          {
+            carousel.map((item) => (
+              <button
+                class:list={["about__card", item.position]}
+                type="button"
+                data-about-card
+                aria-label={`Ver ${item.alt}`}
+              >
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  widths={[320, 520]}
+                  sizes="(max-width: 900px) 60vw, 30vw"
+                  loading="lazy"
+                  decoding="async"
+                  class="about__card-img"
+                />
+              </button>
+            ))
+          }
+        </div>
       </div>
 
       <div class="about__philosophy">
@@ -198,6 +239,112 @@ const gallery = [
       );
       bottomObserver.observe(bottom);
     }
+  }
+
+  // ------------------------------------------------------------------
+  // Carrusel de pilares corporativos.
+  // Tres tarjetas fijas en el DOM (no se reconstruyen). Guardamos el orden
+  // de las tarjetas; al hacer clic en una lateral rotamos ese orden y
+  // reasignamos las clases .pos-left / .pos-center / .pos-right.
+  // ------------------------------------------------------------------
+  const carouselRoot = document.querySelector<HTMLElement>("[data-about-carousel]");
+
+  if (carouselRoot) {
+    const cards = Array.from(
+      carouselRoot.querySelectorAll<HTMLElement>("[data-about-card]"),
+    );
+    const POSITIONS = ["pos-left", "pos-center", "pos-right"] as const;
+
+    // order[i] = índice de la tarjeta que ocupa la ranura i.
+    // Ranuras: 0 = izquierda, 1 = centro, 2 = derecha.
+    const initialOrder = cards.map((card) => {
+      if (card.classList.contains("pos-left")) return 0;
+      if (card.classList.contains("pos-right")) return 2;
+      return 1;
+    });
+    const order = [...initialOrder];
+
+    let animating = false;
+    const reduceMotion = () =>
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const apply = () => {
+      cards.forEach((card) => card.classList.remove(...POSITIONS));
+      order.forEach((cardIndex, slot) => {
+        const card = cards[cardIndex];
+        card.classList.add(POSITIONS[slot]);
+        const isCenter = slot === 1;
+        card.tabIndex = isCenter ? -1 : 0;
+        card.setAttribute("aria-current", isCenter ? "true" : "false");
+      });
+    };
+
+    // Rota el orden una ranura. direction 1 (clic a la derecha) y -1 (clic a
+    // la izquierda) producen movimientos inversos y ciclan infinitamente.
+    const rotate = (direction: 1 | -1) => {
+      if (animating) return;
+
+      const next = order.slice();
+      for (let slot = 0; slot < next.length; slot++) {
+        const from = (slot - direction + next.length) % next.length;
+        next[slot] = order[from];
+      }
+      for (let i = 0; i < order.length; i++) order[i] = next[i];
+
+      apply();
+
+      if (!reduceMotion()) {
+        animating = true;
+        window.setTimeout(() => {
+          animating = false;
+        }, 420);
+      }
+    };
+
+    cards.forEach((card, index) => {
+      card.addEventListener("click", () => {
+        const slot = order.indexOf(index);
+        if (slot === 1) return; // La central no se mueve.
+        // Clic en la derecha (slot 2) -> gira a la izquierda; izquierda -> derecha.
+        rotate(slot === 2 ? 1 : -1);
+        restartAuto();
+      });
+    });
+
+    // Auto-rotación cada 2,5 s. Se pausa al interactuar y al ocultar la
+    // pestaña, y se respeta prefers-reduced-motion.
+    const AUTO_INTERVAL = 2500;
+    let autoTimer: number | null = null;
+
+    const stopAuto = () => {
+      if (autoTimer !== null) {
+        window.clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    };
+
+    const startAuto = () => {
+      if (reduceMotion()) return;
+      stopAuto();
+      autoTimer = window.setInterval(() => rotate(1), AUTO_INTERVAL);
+    };
+
+    const restartAuto = () => {
+      stopAuto();
+      startAuto();
+    };
+
+    carouselRoot.addEventListener("mouseenter", stopAuto);
+    carouselRoot.addEventListener("mouseleave", startAuto);
+    carouselRoot.addEventListener("focusin", stopAuto);
+    carouselRoot.addEventListener("focusout", startAuto);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopAuto();
+      else startAuto();
+    });
+
+    apply();
+    startAuto();
   }
 </script>
 
@@ -321,23 +468,83 @@ const gallery = [
   .about__bottom-grid {
     display: grid;
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    gap: clamp(2rem, 5vw, 4.5rem);
+    gap: clamp(2rem, 8vw, 7.5rem);
     align-items: start;
   }
 
   .about__figure {
     margin: 0;
-    border-radius: 28px;
-    overflow: hidden;
+    width: 100%;
+    min-width: 0;
     max-width: 24rem;
   }
 
-  .about__figure-img {
+  /* ----------------------------------------------------------------------
+     Carrusel de pilares: tres tarjetas verticales rectas.
+     La central domina; las laterales quedan detrás, algo más chicas y
+     oscurecidas. Sin rotaciones.
+     ---------------------------------------------------------------------- */
+  .about__carousel {
+    margin-top:10%;
+    position: relative;
+    width: 100%;
+    height: 450px;
+    --card-w: 82%;
+    --card-h: 90%;
+    --side-shift: 46%;
+  }
+
+  .about__card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--card-w);
+    height: var(--card-h);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--brand-900);
+    cursor: pointer;
+    transform-origin: center center;
+    transition:
+      transform 420ms ease-in-out,
+      filter 420ms ease-in-out,
+      opacity 420ms ease-in-out;
+    will-change: transform;
+  }
+
+  .about__card-img {
     display: block;
     width: 100%;
-    height: 550px;
-    
+    height: 100%;
     object-fit: cover;
+  }
+
+  /* Posiciones: izquierda / centro / derecha. z-index en la posición (no en
+     el estado transitorio) para que la central siempre quede al frente. */
+  .about__card.pos-left {
+    transform: translateX(calc(-50% - var(--side-shift))) scale(0.85);
+    filter: brightness(0.7) blur(3px);
+    z-index: 1;
+  }
+
+  .about__card.pos-center {
+    transform: translateX(-50%) scale(1);
+    filter: brightness(1) blur(0);
+    z-index: 3;
+  }
+
+  .about__card.pos-right {
+    transform: translateX(calc(-50% + var(--side-shift))) scale(0.85);
+    filter: brightness(0.7) blur(3px);
+    z-index: 1;
+  }
+
+  .about__card:focus-visible {
+    outline: 3px solid var(--accent-500);
+    outline-offset: 3px;
   }
 
   .about__eyebrow-dark {
@@ -606,13 +813,19 @@ const gallery = [
     }
 
     .about__bottom-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: clamp(2rem, 5vw, 3rem);
     }
 
     .about__figure {
       max-width: 26rem;
       margin-inline: auto;
+    }
+
+    .about__carousel {
+      height: 440px;
+      --card-w: 58%;
+      --side-shift: 40%;
     }
   }
 
@@ -630,6 +843,18 @@ const gallery = [
       font-size: 0.66rem;
       left: 0.6rem;
       bottom: 0.6rem;
+    }
+
+    /* Carrusel: se acortan las distancias laterales para no desbordar.
+       Las tres posiciones siguen presentes. */
+    .about__carousel {
+      height: 360px;
+      --card-w: 56%;
+      --side-shift: 33%;
+    }
+
+    .about__card {
+      border-radius: 18px;
     }
   }
 
