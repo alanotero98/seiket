@@ -6,74 +6,45 @@ import Icon from "./ui/Icon.astro";
 import { services } from "../data/site";
 ---
 
-<Section id="servicios" labelledby="servicios-title">
-  <div class="services__head">
-    <div class="services__head-text">
-      <p class="eyebrow">Servicios</p>
-      <h2 id="servicios-title">Soluciones integrales para sus instalaciones</h2>
-      <p class="lead">
-        De la oficina a la industria aeroespacial: combinamos Facility Management, mantenimiento
-        y limpiezas técnicas de alta complejidad con protocolos estrictos y personal calificado.
-      </p>
-    </div>
-    <div class="services__head-action">
-      <Button href="#contacto" variant="secondary" icon="arrow-right" size="lg">
-        Ver todos los servicios
-      </Button>
-    </div>
+<Section id="servicios" labelledby="servicios-title" tone="surface">
+  <div class="section-head">
+    <p class="eyebrow">Nuestros servicios</p>
+    <h2 id="servicios-title">Soluciones integrales para cada entorno de trabajo.</h2>
+    <p class="lead">
+      Limpieza profesional, mantenimiento y gestión de instalaciones con personal
+      capacitado y estándares de calidad exigentes.
+    </p>
+    
   </div>
 
-  <ul class="bento" role="list">
+  <ul class="svc-grid" role="list">
     {
       services.map((service) => (
-        <li class:list={["bento__item", `bento__item--${service.size}`]}>
-          {service.image ? (
-            <article
-              class:list={[
-                "svc-card",
-                "svc-card--media",
-                `svc-card--${service.size}`,
-              ]}
-            >
-              <div class="svc-card__media">
-                <Image
-                  src={service.image}
-                  alt={service.imageAlt ?? ""}
-                  widths={[480, 800, 1200]}
-                  sizes={service.size === "hero"
-                    ? "(min-width: 1024px) 62vw, 100vw"
-                    : "(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"}
-                  format="webp"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <span class="svc-card__overlay" aria-hidden="true" />
-              <div class="svc-card__content">
-                <span class="svc-card__icon">
-                  <Icon name={service.icon} size={24} />
-                </span>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-              </div>
-            </article>
-          ) : (
-            <article
-              class:list={[
-                "svc-card",
-                `svc-card--${service.tone ?? "light"}`,
-                service.size === "wide" && "svc-card--wide",
-              ]}
-            >
-              <span class="svc-card__icon">
-                <Icon name={service.icon} size={26} />
+        <li class="svc-grid__item">
+          <article class="svc-card">
+            <div class="svc-card__media">
+              <Image
+                src={service.image}
+                alt={service.imageAlt}
+                widths={[480, 800, 1200]}
+                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
+                format="webp"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="svc-card__icon" aria-hidden="true">
+                <Icon name={service.icon} size={24} />
               </span>
-              <div class="svc-card__body">
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-              </div>
-            </article>
-          )}
+            </div>
+            <div class="svc-card__body">
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+              <a class="svc-card__link" href="#contacto">
+                Más info
+                <Icon name="arrow-right" size={16} class="svc-card__link-icon" />
+              </a>
+            </div>
+          </article>
         </li>
       ))
     }
@@ -81,117 +52,135 @@ import { services } from "../data/site";
 </Section>
 
 <style>
-  /* Header de sección (izquierda + acción a la derecha) */
-  .services__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-5);
-    margin-bottom: clamp(2rem, 4vw, 3rem);
-  }
-
-  .services__head-text {
-    max-width: 44rem;
-  }
-
-  .services__head-text .lead {
-    margin-top: var(--space-4);
+  /* ---------------------------------------------------------------------- */
+  /* Encabezado — centrado                                                  */
+  /* ---------------------------------------------------------------------- */
+  .services__head-action {
+    margin-top: var(--space-5);
   }
 
   /* ---------------------------------------------------------------------- */
-  /* Grilla Bento Box                                                       */
+  /* Grid de servicios                                                      */
   /* ---------------------------------------------------------------------- */
-  .bento {
+  .svc-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-5);
+    gap: clamp(1.5rem, 3vw, 2rem);
+    max-width: 72rem;
+    margin-inline: auto;
   }
 
-  .bento__item {
-    display: block;
+  /* Tablet: 4 columnas; con 5 tarjetas la última fila (1 item) se centra. */
+  @media (min-width: 640px) {
+    .svc-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .svc-grid__item {
+      grid-column: span 2;
+    }
+
+    .svc-grid__item:nth-child(5):nth-last-child(1) {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  /* Desktop: 6 columnas; con 5 tarjetas la segunda fila (2 items) se centra. */
+  @media (min-width: 1024px) {
+    .svc-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .svc-grid__item {
+      grid-column: span 2;
+    }
+
+    .svc-grid__item:nth-child(4):nth-last-child(2) {
+      grid-column: 2 / span 2;
+    }
+
+    .svc-grid__item:nth-child(5):nth-last-child(1) {
+      grid-column: 4 / span 2;
+    }
+  }
+
+  .svc-grid__item {
     min-width: 0;
   }
 
-  @media (min-width: 640px) {
-    .bento {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .bento__item--hero,
-    .bento__item--wide,
-    .bento__item--sm:last-child {
-      grid-column: span 2;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .bento {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-auto-rows: minmax(15rem, auto);
-    }
-
-    .bento__item--hero {
-      grid-column: span 2;
-      grid-row: span 2;
-    }
-
-    .bento__item--wide {
-      grid-column: span 2;
-      grid-row: span 1;
-    }
-
-    .bento__item--sm:last-child {
-      grid-column: span 1;
-    }
-  }
-
   /* ---------------------------------------------------------------------- */
-  /* Tarjetas                                                               */
+  /* Tarjeta: imagen arriba + contenido abajo, icono en la unión            */
   /* ---------------------------------------------------------------------- */
   .svc-card {
-    position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
     height: 100%;
-    padding: clamp(1.5rem, 3vw, 2.25rem);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
-    background: var(--color-surface);
+    /* overflow:hidden recorta la imagen en las esquinas redondeadas; el icono
+       no se ve afectado porque queda dentro de los límites de la tarjeta. */
     overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition:
       transform var(--transition),
       box-shadow var(--transition),
       border-color var(--transition);
   }
 
-  .svc-card:hover {
-    transform: translateY(-4px);
+  .svc-card:hover,
+  .svc-card:focus-within {
+    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
     border-color: var(--brand-200);
   }
 
+  .svc-card__media {
+    position: relative;
+    /* La imagen va fuera del flujo para que su proporción intrínseca nunca
+       altere la altura del contenedor (p. ej. fotos cuadradas). */
+    flex: none;
+    aspect-ratio: 4 / 3;
+    background: var(--brand-100);
+  }
+
+  .svc-card__media :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Cuadrado azul superpuesto a la unión imagen/contenido. */
   .svc-card__icon {
+    position: absolute;
+    left: var(--space-5);
+    bottom: 0;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: var(--radius-md);
-    background: var(--brand-50);
-    color: var(--color-primary);
-    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    transform: translateY(50%);
+    background: var(--color-primary);
+    color: var(--white);
   }
 
   .svc-card__body {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    flex: 1;
+    gap: var(--space-3);
+    /* El padding superior deja libre la mitad inferior del icono. */
+    padding: clamp(2.4rem, 3vw, 2.75rem) clamp(1.35rem, 2.5vw, 1.75rem)
+      clamp(1.35rem, 2.5vw, 1.75rem);
   }
 
   .svc-card h3 {
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
+    color: var(--ink-900);
   }
 
   .svc-card p {
@@ -199,107 +188,30 @@ import { services } from "../data/site";
     color: var(--color-muted);
   }
 
-  /* Tarjeta oscura (sin imagen) */
-  .svc-card--dark {
-    background: linear-gradient(160deg, var(--brand-900), var(--brand-950));
-    border-color: transparent;
-    color: var(--white);
-  }
-
-  .svc-card--dark h3 {
-    color: var(--white);
-  }
-
-  .svc-card--dark p {
-    color: var(--color-on-dark-muted);
-  }
-
-  .svc-card--dark .svc-card__icon {
-    background: rgba(255, 255, 255, 0.12);
-    color: var(--accent-400);
-  }
-
-  /* Variante horizontal (2 columnas, ícono a la izquierda) */
-  .svc-card--wide {
-    flex-direction: row;
+  .svc-card__link {
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-5);
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-primary);
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* Tarjetas con imagen                                                    */
-  /* ---------------------------------------------------------------------- */
-  .svc-card--media {
-    justify-content: flex-end;
-    color: var(--white);
-    background: var(--brand-950);
-    border-color: transparent;
+  .svc-card__link:hover {
+    color: var(--color-primary-hover);
   }
 
-  .svc-card--media:hover {
-    border-color: transparent;
+  .svc-card__link :global(.svc-card__link-icon) {
+    transition: transform var(--transition);
   }
 
-  .svc-card__media {
-    position: absolute;
-    inset: 0;
-  }
-
-  .svc-card__media :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 600ms var(--ease);
-  }
-
-  .svc-card--media:hover .svc-card__media :global(img) {
-    transform: scale(1.05);
-  }
-
-  .svc-card__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(6, 14, 24, 0.05) 0%,
-      rgba(6, 14, 24, 0.45) 50%,
-      rgba(6, 14, 24, 0.9) 100%
-    );
-  }
-
-  .svc-card__content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .svc-card--media h3 {
-    color: var(--white);
-  }
-
-  .svc-card--media p {
-    color: rgba(255, 255, 255, 0.85);
-  }
-
-  .svc-card--media .svc-card__icon {
-    background: rgba(255, 255, 255, 0.16);
-    color: var(--white);
-    backdrop-filter: blur(4px);
-  }
-
-  /* Tarjeta hero (foto grande 2x2) */
-  .svc-card--hero {
-    min-height: 22rem;
-    padding: clamp(1.75rem, 3vw, 2.5rem);
-  }
-
-  .svc-card--hero h3 {
-    font-size: var(--text-2xl);
-  }
-
-  .svc-card--hero p {
-    max-width: 34rem;
+  .svc-card__link:hover :global(.svc-card__link-icon),
+  .svc-card__link:focus-visible :global(.svc-card__link-icon) {
+    transform: translateX(3px);
   }
 </style>

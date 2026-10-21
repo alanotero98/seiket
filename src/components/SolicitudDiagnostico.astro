@@ -1,28 +1,9 @@
 ---
-import { Image } from "astro:assets";
-import logo from "../assets/Logo_43489.png";
 import Button from "./ui/Button.astro";
 import { contact, diagnostico } from "../data/site";
 ---
 
 <div class="solicitud">
-  <header class="solicitud__header">
-    <span class="solicitud__logo">
-      <Image
-        src={logo}
-        alt="SEIKET Facility Services"
-        class="solicitud__logo-img"
-        height={580}
-        format="webp"
-        loading="lazy"
-        decoding="async"
-      />
-    </span>
-    <h2 id="contacto-title" class="solicitud__title">{diagnostico.title}</h2>
-    <p class="solicitud__description">{diagnostico.description}</p>
-  </header>
-
-  <div class="solicitud__body">
     <form
       class="solicitud__form"
       data-diagnostico-form
@@ -157,53 +138,11 @@ import { contact, diagnostico } from "../data/site";
         <p class="solicitud__status" role="status" aria-live="polite" data-status></p>
       </div>
     </form>
-  </div>
 </div>
 
 <style>
   .solicitud {
-    background: var(--white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
-  }
-
-  .solicitud__header {
-    padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.25rem, 4vw, 3rem);
-    text-align: center;
     color: var(--color-on-dark);
-    background:
-      radial-gradient(circle at 88% 8%, rgba(14, 165, 233, 0.28), transparent 45%),
-      linear-gradient(140deg, var(--brand-800), var(--brand-950));
-  }
-
-  .solicitud__logo {
-    display: inline-flex;
-    justify-content: center;
-    margin-bottom: var(--space-3);
-  }
-
-  .solicitud__logo-img {
-    height: 6rem;
-    width: auto;
-    display: block;
-  }
-
-  .solicitud__title {
-    font-size: var(--text-2xl);
-    color: var(--white);
-  }
-
-  .solicitud__description {
-    max-width: 34rem;
-    margin: var(--space-3) auto 0;
-    font-size: var(--text-sm);
-    color: var(--color-on-dark-muted);
-  }
-
-  .solicitud__body {
-    padding: clamp(1.5rem, 4vw, 2.75rem);
   }
 
   .solicitud__form {
@@ -228,7 +167,7 @@ import { contact, diagnostico } from "../data/site";
     font-weight: var(--font-weight-bold);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--brand-700);
+    color: var(--accent-400);
   }
 
   .block__title::before {
@@ -242,7 +181,7 @@ import { contact, diagnostico } from "../data/site";
   .block__intro {
     margin-bottom: var(--space-4);
     font-size: var(--text-sm);
-    color: var(--color-muted);
+    color: var(--color-on-dark-muted);
   }
 
   .grid-2 {
@@ -259,11 +198,11 @@ import { contact, diagnostico } from "../data/site";
   .field label {
     font-size: var(--text-sm);
     font-weight: var(--font-weight-semibold);
-    color: var(--ink-700);
+    color: var(--ink-300);
   }
 
   .field label span[aria-hidden] {
-    color: var(--accent-600);
+    color: var(--accent-400);
   }
 
   .field input,
@@ -271,9 +210,10 @@ import { contact, diagnostico } from "../data/site";
   .field textarea {
     width: 100%;
     padding: 0.7rem 0.9rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: var(--radius-md);
-    background: var(--white);
+    background: rgba(18, 44, 69, 0.72);
+    color: var(--white);
     transition:
       border-color var(--transition),
       box-shadow var(--transition);
@@ -281,10 +221,14 @@ import { contact, diagnostico } from "../data/site";
 
   .field select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235b6b7b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.9rem center;
     padding-right: 2.5rem;
+  }
+
+  .field select option {
+    color: var(--ink-900);
   }
 
   .field textarea {
@@ -294,15 +238,15 @@ import { contact, diagnostico } from "../data/site";
 
   .field input::placeholder,
   .field textarea::placeholder {
-    color: var(--ink-400);
+    color: rgba(255, 255, 255, 0.55);
   }
 
   .field input:focus,
   .field select:focus,
   .field textarea:focus {
     outline: none;
-    border-color: var(--brand-400);
-    box-shadow: 0 0 0 3px rgba(74, 146, 199, 0.2);
+    border-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
   }
 
   .field input[aria-invalid="true"],
@@ -313,12 +257,12 @@ import { contact, diagnostico } from "../data/site";
 
   .field__error {
     font-size: var(--text-xs);
-    color: #c0392b;
+    color: #fca5a5;
   }
 
   .field__help {
     font-size: var(--text-xs);
-    color: var(--color-muted);
+    color: var(--color-on-dark-muted);
   }
 
   /* Tarjetas de servicios */
@@ -333,10 +277,10 @@ import { contact, diagnostico } from "../data/site";
     align-items: flex-start;
     gap: var(--space-3);
     padding: 0.9rem 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--white);
     border-radius: var(--radius-md);
     cursor: pointer;
-    background: var(--white);
+    background: transparent;
     transition:
       border-color var(--transition),
       box-shadow var(--transition),
@@ -344,7 +288,7 @@ import { contact, diagnostico } from "../data/site";
   }
 
   .svc-card:hover {
-    border-color: var(--brand-300);
+    border-color: var(--accent-400);
   }
 
   .svc-card input {
@@ -352,7 +296,7 @@ import { contact, diagnostico } from "../data/site";
     height: 1.15rem;
     margin-top: 0.15rem;
     flex-shrink: 0;
-    accent-color: var(--color-primary);
+    accent-color: var(--accent-400);
   }
 
   .svc-card__text {
@@ -364,20 +308,20 @@ import { contact, diagnostico } from "../data/site";
   .svc-card__title {
     font-size: var(--text-sm);
     font-weight: var(--font-weight-bold);
-    color: var(--ink-900);
+    color: var(--ink-300);
   }
 
   .svc-card__desc {
     font-size: var(--text-xs);
     line-height: 1.5;
-    color: var(--color-muted);
+    color: var(--color-on-dark-muted);
   }
 
   .svc-card:has(input:checked),
   .svc-card.is-checked {
-    border-color: var(--brand-500);
-    background: var(--brand-50);
-    box-shadow: 0 0 0 1px var(--brand-500) inset;
+    border-color: var(--white);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 1px var(--white) inset;
   }
 
   .solicitud__honeypot {
@@ -403,7 +347,7 @@ import { contact, diagnostico } from "../data/site";
     max-width: 40rem;
     font-size: var(--text-xs);
     text-align: center;
-    color: var(--color-muted);
+    color: var(--color-on-dark-muted);
   }
 
   .solicitud__status {
@@ -414,11 +358,11 @@ import { contact, diagnostico } from "../data/site";
   }
 
   .solicitud__status[data-state="success"] {
-    color: var(--accent-600);
+    color: var(--accent-400);
   }
 
   .solicitud__status[data-state="error"] {
-    color: #c0392b;
+    color: #fca5a5;
   }
 
   @media (max-width: 680px) {

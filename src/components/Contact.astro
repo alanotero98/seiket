@@ -1,8 +1,9 @@
 ---
-import Section from "./ui/Section.astro";
+import { Image } from "astro:assets";
+import logo from "../assets/Logo_43489.png";
 import Icon from "./ui/Icon.astro";
 import SolicitudDiagnostico from "./SolicitudDiagnostico.astro";
-import { contact } from "../data/site";
+import { contact, diagnostico } from "../data/site";
 
 const detailItems = [
   { icon: "mail", label: "Email", value: contact.email, href: `mailto:${contact.email}` },
@@ -11,61 +12,127 @@ const detailItems = [
 const socials = contact.social.filter((item) => item.href);
 ---
 
-<Section id="contacto" tone="surface" labelledby="contacto-title">
-  <div class="contact__wrap">
-    <SolicitudDiagnostico />
-  </div>
+<section id="contacto" class="contact" aria-labelledby="contacto-title">
+  <div class="contact__grid">
+    <div class="contact__intro">
+      <div class="contact__intro-inner">
+        <span class="contact__logo">
+          <Image
+            src={logo}
+            alt="SEIKET Facility Services"
+            class="contact__logo-img"
+            height={580}
+            format="webp"
+            loading="lazy"
+            decoding="async"
+          />
+        </span>
 
-  <div class="contact__details">
-    <p class="contact__details-title">¿Preferís contactarnos directamente?</p>
-    <ul class="contact-details">
-      {
-        detailItems.map((item) => (
-          <li class="contact-details__item">
-            <span class="contact-details__icon">
-              <Icon name={item.icon} size={18} />
-            </span>
-            {item.href ? (
-              <a href={item.href}>{item.value}</a>
-            ) : (
-              <span>{item.value}</span>
-            )}
-          </li>
-        ))
-      }
-    </ul>
+        <h2 id="contacto-title" class="contact__title">{diagnostico.title}</h2>
+        <p class="contact__description">{diagnostico.description}</p>
 
-    {
-      socials.length > 0 && (
-        <ul class="contact__social">
-          {socials.map((item) => (
-            <li>
-              <a
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={item.label}
-              >
-                <Icon name={item.icon} size={20} />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
+        <div class="contact__details">
+          <p class="contact__details-title">¿Preferís contactarnos directamente?</p>
+          <ul class="contact-details">
+            {
+              detailItems.map((item) => (
+                <li class="contact-details__item">
+                  <span class="contact-details__icon">
+                    <Icon name={item.icon} size={18} />
+                  </span>
+                  {item.href ? <a href={item.href}>{item.value}</a> : <span>{item.value}</span>}
+                </li>
+              ))
+            }
+          </ul>
+
+          {
+            socials.length > 0 && (
+              <ul class="contact__social">
+                {socials.map((item) => (
+                  <li>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.label}
+                    >
+                      <Icon name={item.icon} size={20} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="contact__form-panel">
+      <div class="contact__form-inner">
+        <SolicitudDiagnostico />
+      </div>
+    </div>
   </div>
-</Section>
+</section>
 
 <style>
-  .contact__wrap {
-    max-width: 52rem;
+  .contact {
+    --contact-navy: #0d233a;
+    background: var(--contact-navy);
+  }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .contact__intro {
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    display: flex;
+    align-items: center;
+    background: var(--contact-navy);
+    color: var(--color-on-dark);
+    overflow: hidden;
+  }
+
+  .contact__intro-inner {
+    width: 100%;
+    max-width: 40rem;
     margin-inline: auto;
+    padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .contact__logo {
+    display: inline-flex;
+    margin-bottom: var(--space-5);
+  }
+
+  .contact__logo-img {
+    height: 5.5rem;
+    width: auto;
+    display: block;
+  }
+
+  .contact__title {
+    font-size: var(--text-3xl);
+    color: var(--white);
+  }
+
+  .contact__description {
+    max-width: 34rem;
+    margin-top: var(--space-4);
+    font-size: var(--text-base);
+    color: var(--color-on-dark);
   }
 
   .contact__details {
-    max-width: 52rem;
-    margin: var(--space-7) auto 0;
-    text-align: center;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
   }
 
   .contact__details-title {
@@ -73,14 +140,13 @@ const socials = contact.social.filter((item) => item.href);
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--color-muted);
-    margin-bottom: var(--space-5);
+    color: var(--color-on-dark);
+    margin-bottom: var(--space-4);
   }
 
   .contact-details {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: var(--space-4) var(--space-6);
   }
 
@@ -98,15 +164,15 @@ const socials = contact.social.filter((item) => item.href);
     width: 2rem;
     height: 2rem;
     border-radius: var(--radius-pill);
-    background: var(--white);
-    border: 1px solid var(--color-border);
-    color: var(--color-primary);
+    background: var(--brand-800);
+    border: 0;
+    color: var(--white);
     flex-shrink: 0;
   }
 
   .contact-details__item a {
     font-weight: var(--font-weight-medium);
-    color: var(--color-primary);
+    color: var(--white);
     text-decoration: none;
   }
 
@@ -115,12 +181,11 @@ const socials = contact.social.filter((item) => item.href);
   }
 
   .contact-details__item span {
-    color: var(--ink-700);
+    color: var(--color-on-dark);
   }
 
   .contact__social {
     display: flex;
-    justify-content: center;
     gap: var(--space-3);
     margin-top: var(--space-5);
   }
@@ -132,18 +197,44 @@ const socials = contact.social.filter((item) => item.href);
     width: 2.5rem;
     height: 2.5rem;
     border-radius: var(--radius-pill);
-    background: var(--white);
-    border: 1px solid var(--color-border);
-    color: var(--brand-800);
+    background: var(--brand-800);
+    border: 0;
+    color: var(--white);
     transition:
-      color var(--transition),
-      border-color var(--transition),
+      background-color var(--transition),
       transform var(--transition);
   }
 
   .contact__social a:hover {
-    color: var(--color-primary);
-    border-color: var(--brand-300);
+    background: var(--brand-700);
     transform: translateY(-2px);
+  }
+
+  .contact__form-panel {
+    background: var(--contact-navy);
+    color: var(--color-on-dark);
+  }
+
+  .contact__form-inner {
+    max-width: 46rem;
+    margin-inline: auto;
+    padding: clamp(2.5rem, 5vw, 5rem) clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  @media (max-width: 960px) {
+    .contact__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact__intro {
+      position: static;
+      height: auto;
+      overflow: visible;
+    }
+
+    .contact__intro-inner {
+      max-width: 52rem;
+      padding-block: clamp(2.5rem, 6vw, 4rem);
+    }
   }
 </style>

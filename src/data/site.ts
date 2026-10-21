@@ -11,11 +11,15 @@
    ========================================================================== */
 
 import type { ImageMetadata } from "astro";
-import servicio1 from "../assets/servicio-1.jpg";
-import servicio2 from "../assets/servicio-2.jpg";
-import servicio3 from "../assets/servicio-3.jpg";
-import servicio4 from "../assets/servicio-4.jpg";
-import servicio5 from "../assets/servicio-5.jpg";
+import servicio1 from "../assets/oficina.jpg";
+import servicio2 from "../assets/aeronautica.jpg";
+import servicio3 from "../assets/paneles.jpg";
+import servicio4 from "../assets/finalObra.webp";
+import cleaning from "../assets/industrial.jpg";
+import oficina from "../assets/corporativo.jpg";
+import industrial from "../assets/construccion.avif";
+import aeronautica from "../assets/aviones.jpg";
+import paneles from "../assets/paneles-espacio.jpg";
 
 export const siteUrl = import.meta.env.SITE ?? "https://seiket.example";
 
@@ -57,69 +61,97 @@ export const nav = [
   { label: "Servicios", href: "#servicios" },
   { label: "Sectores", href: "#sectores" },
   { label: "Nosotros", href: "#nosotros" },
-  { label: "Proceso", href: "#proceso" },
   { label: "Contacto", href: "#contacto" },
 ];
 
-export const hero = {
-  eyebrow: "Facility Management y limpieza técnica especializada",
-  title: "De la oficina a la industria aeroespacial: precisión técnica en cada superficie",
-  description:
-    "SEIKET no solo limpia: protege los activos de tu empresa. Contamos con la capacidad técnica y el personal calificado para intervenir desde un final de obra pesado en una fábrica hasta la delicadeza del fuselaje de un avión o la superficie de un panel solar.",
-  primaryCta: { label: "Solicitar propuesta", href: "#contacto" },
-  secondaryCta: { label: "Ver servicios", href: "#servicios" },
-  highlights: [
-    { icon: "users", label: "Personal calificado" },
-    { icon: "clipboard", label: "Protocolos estrictos" },
-    { icon: "badge", label: "Productos certificados" },
-  ],
-  panel: {
-    title: "Plan de servicio",
-    subtitle: "Gestión integral de instalaciones",
-    foot: "Equipo SEIKET asignado",
-    items: [
-      { icon: "building", label: "Facility Management" },
-      { icon: "plane", label: "Limpieza técnica aeronáutica" },
-      { icon: "sun", label: "Mantenimiento de paneles solares" },
-    ],
-  },
-  badges: {
-    top: { icon: "shield", label: "Protocolos estrictos" },
-    bottom: { icon: "badge", label: "Productos certificados" },
-  },
+export type HeroSlide = {
+  title: string;
+  description: string;
+  /** Imagen local importada desde `src/assets`. */
+  image: ImageMetadata;
+  imageAlt: string;
+  /** CSS object-position para conservar el punto focal (ej. "center 40%"). */
+  focalPoint?: string;
+};
+
+export const heroCarousel = {
+  label: "Contenido destacado",
+  /** Intervalo de autoplay en milisegundos. */
+  interval: 4000,
+  slides: [
+    {
+      title: "Espacios impecables. Empresas que avanzan.",
+      description:
+        "Soluciones integrales de limpieza y mantenimiento corporativo que garantizan entornos de trabajo cuidados y preparados para el día a día.",
+      image: servicio1,
+      imageAlt:
+        "Equipo SEIKET gestionando el mantenimiento de un entorno corporativo.",
+      focalPoint: "center",
+    },
+    {
+      title: "Preparados para los grandes desafíos.",
+      description:
+        "Limpieza profesional para fábricas y galpones industriales, con personal capacitado, precisión operativa y altos estándares de seguridad.",
+      image: servicio2,
+      imageAlt:
+        "Limpieza técnica del fuselaje de una aeronave con protocolos certificados.",
+      focalPoint: "center",
+    },
+    {
+      title: "Tu obra terminada. Todo listo para empezar.",
+      description:
+        "Transformamos espacios residenciales, comerciales e industriales en ambientes limpios y preparados para su próximo uso.",
+      image: servicio3,
+      imageAlt:
+        "Limpieza profesional de paneles solares fotovoltaicos.",
+      focalPoint: "center",
+    },
+  ] as HeroSlide[],
 };
 
 export type Service = {
   icon: string;
   title: string;
   description: string;
-  /** Tamaño/posición dentro de la grilla Bento Box. */
-  size: "hero" | "wide" | "sm";
-  /** Foto de fondo. Si falta, la tarjeta se pinta según `tone`. */
-  image?: ImageMetadata;
-  imageAlt?: string;
-  /** Estilo de la tarjeta cuando no tiene imagen. */
-  tone?: "dark" | "light";
+  /** Foto de la tarjeta. */
+  image: ImageMetadata;
+  imageAlt: string;
 };
 
-// 5 servicios clave. La tarjeta "hero" domina la composición (foto grande 2x2).
+// Servicios de la sección Servicios (3 arriba + 2 abajo). El orden define esa
+// sección y el listado del footer.
 export const services: Service[] = [
   {
     icon: "building",
     title: "Facility Management Corporativo",
     description:
       "Gestión integral y mantenimiento de oficinas, empresas e instituciones, con supervisión permanente y control de calidad.",
-    size: "hero",
     image: servicio1,
     imageAlt:
       "Equipo SEIKET gestionando el mantenimiento de un entorno corporativo.",
+  },
+  {
+    icon: "hard-hat",
+    title: "Limpieza Industrial",
+    description:
+      "Saneamiento profundo en fábricas, galpones y plantas productivas, con personal capacitado y altos estándares de seguridad.",
+    image: cleaning,
+    imageAlt: "Limpieza industrial en fábricas y galpones.",
+  },
+  {
+    icon: "wrench",
+    title: "Limpieza Final de Obra",
+    description:
+      "Convertimos su obra terminada en un espacio listo para habitar o producir: casas, fábricas, galpones y locales comerciales.",
+    image: servicio4,
+    imageAlt:
+      "Limpieza final de obra en un espacio listo para habitar o producir.",
   },
   {
     icon: "plane",
     title: "Limpieza Técnica Aeronáutica",
     description:
       "Protocolos estrictos y productos certificados, no abrasivos, para el cuidado del fuselaje de aviones y aeronaves.",
-    size: "sm",
     image: servicio2,
     imageAlt:
       "Limpieza técnica del fuselaje de una aeronave con protocolos certificados.",
@@ -129,61 +161,52 @@ export const services: Service[] = [
     title: "Limpieza de Paneles Solares",
     description:
       "Un panel sucio pierde eficiencia. Limpieza profesional para maximizar el rendimiento de su energía limpia.",
-    size: "sm",
     image: servicio3,
     imageAlt: "Limpieza profesional de paneles solares fotovoltaicos.",
-  },
-  {
-    icon: "wrench",
-    title: "Mantenimiento General e Infraestructura",
-    description:
-      "Tareas preventivas y correctivas para conservar sus instalaciones seguras, operativas y en condiciones óptimas.",
-     image: servicio3,
-      size: "wide",
-    tone: "dark",
-  },
-  {
-    icon: "hard-hat",
-    title: "Limpieza Final de Obra",
-    description:
-      "Convertimos su obra terminada en un espacio listo para habitar o producir: casas, fábricas, galpones y locales comerciales.",
-    size: "sm",
-    image: servicio4,
-    imageAlt:
-      "Limpieza final de obra en un espacio listo para habitar o producir.",
   },
 ];
 
 export type Sector = {
-  icon: string;
+  icon?: string;
   title: string;
   description: string;
+  image: ImageMetadata;
+  imageAlt: string;
+  focalPoint?: string;
 };
 
 export const sectors: Sector[] = [
   {
-    icon: "building",
     title: "Corporativo",
     description:
-      "Gerentes de RRHH, Operaciones y dueños de Pymes que necesitan delegar el mantenimiento de sus instalaciones.",
+      "Limpieza y mantenimiento para oficinas, empresas e instituciones que exigen espacios cuidados y una operación eficiente.",
+    image: oficina,
+    imageAlt: "Oficina corporativa moderna, luminosa y profesional, con espacios de trabajo impecables.",
+    focalPoint: "center",
   },
   {
-    icon: "hard-hat",
-    title: "Construcción e industrial",
+    title: "Industrial",
     description:
-      "Arquitectos, constructoras, ingenieros y desarrolladores que requieren finales de obra en casas, galpones y fábricas.",
+      "Soluciones profesionales para fábricas, galpones y proyectos de construcción, desde el mantenimiento hasta la limpieza final de obra.",
+    image: industrial,
+    imageAlt: "Interior de una nave industrial, fábrica o galpón de grandes dimensiones con actividades operativas.",
+    focalPoint: "center 40%",
   },
   {
-    icon: "plane",
     title: "Aeronáutico",
     description:
-      "Hangares, aeroclubes, empresas de vuelos privados y aerolíneas que exigen protocolos y productos certificados.",
+      "Limpieza especializada de aeronaves con protocolos específicos y productos adecuados para el cuidado de sus superficies.",
+    image: aeronautica,
+    imageAlt: "Aeronave en un hangar o personal realizando tareas de limpieza técnica en un avión.",
+    focalPoint: "center",
   },
   {
-    icon: "sun",
-    title: "Energético y renovables",
+    title: "Energía y renovables",
     description:
-      "Parques solares e industrias con instalaciones fotovoltaicas que no pueden perder eficiencia energética.",
+      "Limpieza profesional de paneles solares para contribuir a conservar su rendimiento y eficiencia energética.",
+    image: paneles,
+    imageAlt: "Instalación fotovoltaica de gran escala con paneles solares, iluminación natural y composición visual atractiva.",
+    focalPoint: "center",
   },
 ];
 
@@ -232,39 +255,6 @@ export const features: Feature[] = [
   },
 ];
 
-export type ProcessStep = {
-  icon: string;
-  title: string;
-  description: string;
-};
-
-export const process: ProcessStep[] = [
-  {
-    icon: "search",
-    title: "Relevamiento técnico",
-    description:
-      "Analizamos superficies, riesgos y requisitos específicos de tus instalaciones.",
-  },
-  {
-    icon: "document",
-    title: "Propuesta y protocolo",
-    description:
-      "Definimos el plan de servicio, los protocolos y los productos a utilizar en cada tarea.",
-  },
-  {
-    icon: "hard-hat",
-    title: "Ejecución",
-    description:
-      "Desplegamos el equipo y ejecutamos con los estándares técnicos acordados.",
-  },
-  {
-    icon: "chart",
-    title: "Seguimiento y control",
-    description:
-      "Supervisamos resultados, verificamos la calidad y ajustamos el servicio de forma continua.",
-  },
-];
-
 export const about = {
   eyebrow: "Nosotros",
   title: "Precisión técnica en cada superficie",
@@ -273,11 +263,7 @@ export const about = {
     "Nos posicionamos un escalón más arriba de la limpieza tradicional: intervenimos desde un final de obra pesado en una fábrica hasta la delicadeza que requiere el fuselaje de un avión o la superficie de un panel solar, con protocolos estrictos y personal calificado.",
   ],
   values: [
-    {
-      icon: "badge",
-      title: "Capacidad técnica",
-      description: "Servicios que exigen protocolos estrictos y capacitación avanzada.",
-    },
+  
     {
       icon: "shield",
       title: "Cuidado de activos",

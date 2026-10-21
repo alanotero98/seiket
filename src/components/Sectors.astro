@@ -1,61 +1,685 @@
 ---
+import { Image } from "astro:assets";
 import Section from "./ui/Section.astro";
-import Icon from "./ui/Icon.astro";
 import { sectors } from "../data/site";
 ---
 
-<Section id="sectores" tone="alt" labelledby="sectores-title">
-  <div class="section-head">
-    <p class="eyebrow">Sectores</p>
-    <h2 id="sectores-title">Un servicio pensado para tu operación</h2>
-    <p class="lead">
-      Trabajamos con organizaciones de rubros distintos que comparten una misma exigencia:
-      que sus instalaciones estén impecables, seguras y funcionando.
-    </p>
+<Section id="sectores" labelledby="sectores-title" class="sectors-section">
+  <div class="sectors-mobile" data-sectors-mobile>
+    <div class="sectors-mobile__pin">
+      <div class="sectors-mobile__header" data-sectors-header>
+        <div class="sectors-mobile__header-inner">
+          <p class="eyebrow">Sectores</p>
+          <h2 id="sectores-title">Soluciones adaptadas a cada industria.</h2>
+          <p class="lead">
+            Cada entorno tiene sus propios desafíos. Adaptamos nuestros servicios de limpieza
+            y mantenimiento a las necesidades operativas de cada organización, con personal
+            capacitado y altos estándares de calidad.
+          </p>
+        </div>
+      </div>
+      <div class="sectors-mobile__viewport">
+        <div class="sectors-mobile__stack">
+          {
+            sectors.map((sector, index) => {
+              const number = String(index + 1).padStart(2, "0");
+              return (
+              <article class="sectors-mobile__card" data-sectors-card data-card-index={index}>
+                <div class="sectors-mobile__card-media">
+                  <Image
+                    src={sector.image}
+                    alt={sector.imageAlt}
+                    widths={[480, 720, 1024]}
+                    sizes="100vw"
+                    format="webp"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    style={sector.focalPoint ? { objectPosition: sector.focalPoint } : undefined}
+                  />
+                  <div class="sectors-mobile__card-overlay" />
+                </div>
+                <div class="sectors-mobile__card-content">
+                  <span class="sectors-mobile__card-number">{number}</span>
+                  <div class="sectors-mobile__card-text">
+                    <h3 class="sectors-mobile__card-title">{sector.title}</h3>
+                    <p class="sectors-mobile__card-description">{sector.description}</p>
+                  </div>
+                  <a class="sectors-mobile__card-cta" href="#contacto" aria-label={`Consultar sobre ${sector.title}`}>Consultar</a>
+                </div>
+              </article>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="grid grid--4">
-    {
-      sectors.map((sector) => (
-        <article class="card card--interactive sector">
-          <span class="sector__icon">
-            <Icon name={sector.icon} size={26} />
-          </span>
-          <h3>{sector.title}</h3>
-          <p>{sector.description}</p>
-        </article>
-      ))
-    }
+  <div class="sectors-desktop">
+    <div class="section-head">
+      <p class="eyebrow">Sectores</p>
+      <h2>Soluciones adaptadas a cada industria.</h2>
+      <p class="lead">
+        Cada entorno tiene sus propios desafíos. Adaptamos nuestros servicios de limpieza
+        y mantenimiento a las necesidades operativas de cada organización, con personal
+        capacitado y altos estándares de calidad.
+      </p>
+    </div>
+
+    <div class="sectors-accordion" data-sectors-accordion>
+      {
+        sectors.map((sector, index) => {
+          const number = String(index + 1).padStart(2, "0");
+          const isActive = index === 0;
+          return (
+              <article
+                class={`sector-panel${isActive ? " is-active" : ""}`}
+                data-sector-panel
+                role="button"
+                tabindex="0"
+                aria-expanded={isActive ? "true" : "false"}
+                aria-labelledby={`sector-title-d-${index}`}
+              >
+                <div class="sector-panel__media">
+                  <Image
+                    src={sector.image}
+                    alt={sector.imageAlt}
+                    widths={[480, 720, 1024, 1440]}
+                    sizes="(min-width: 1100px) 60vw, (min-width: 768px) 60vw, 100vw"
+                    format="webp"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    style={sector.focalPoint ? { objectPosition: sector.focalPoint } : undefined}
+                  />
+                  <div class="sector-panel__overlay" />
+                </div>
+                <div class="sector-panel__content">
+                  <span class="sector-panel__number">{number}</span>
+                  <div class="sector-panel__text">
+                    <h3 class="sector-panel__title" id={`sector-title-d-${index}`}>{sector.title}</h3>
+                    <p class="sector-panel__description">{sector.description}</p>
+                  </div>
+                  <a class="sector-panel__cta" href="#contacto" aria-label={`Consultar sobre ${sector.title}`}>Consultar</a>
+                </div>
+              </article>
+          );
+        })
+      }
+    </div>
   </div>
 </Section>
 
+<script>
+  const accordions = document.querySelectorAll("[data-sectors-accordion]");
+  const mobileContainers = document.querySelectorAll("[data-sectors-mobile]");
+
+  const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+  const prefersReduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  accordions.forEach((accordion) => {
+    const panels = Array.from(accordion.querySelectorAll("[data-sector-panel]"));
+
+    if (panels.length === 0) return;
+
+    const setActive = (targetPanel) => {
+      panels.forEach((panel) => {
+        const isActive = panel === targetPanel;
+        panel.classList.toggle("is-active", isActive);
+        panel.setAttribute("aria-expanded", isActive ? "true" : "false");
+      });
+    };
+
+    panels.forEach((panel, index) => {
+      if (index === 0 && !accordion.querySelector(".is-active")) {
+        panel.classList.add("is-active");
+        panel.setAttribute("aria-expanded", "true");
+      }
+
+      const activate = (event) => {
+        if (event.type === "keydown") {
+          const key = event.key;
+          if (key !== "Enter" && key !== " ") return;
+          event.preventDefault();
+        }
+        if (isMobile()) return;
+        setActive(panel);
+      };
+
+      panel.addEventListener("click", activate);
+      panel.addEventListener("keydown", activate);
+
+      panel.addEventListener("mouseenter", () => {
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches && !isMobile()) {
+          setActive(panel);
+        }
+      });
+    });
+  });
+
+  if (isMobile() && !prefersReduced()) {
+    mobileContainers.forEach((container) => {
+      const pin = container.querySelector(".sectors-mobile__pin");
+      const header = container.querySelector("[data-sectors-header]");
+      const viewport = container.querySelector(".sectors-mobile__viewport");
+      const stack = container.querySelector(".sectors-mobile__stack");
+      const cards = Array.from(container.querySelectorAll("[data-sectors-card]"));
+      if (!pin || !header || !viewport || !stack || cards.length === 0) return;
+
+      cards.forEach((card, index) => {
+        card.style.zIndex = String(20 + index);
+      });
+
+      const onScroll = () => {
+        const viewportHeight = window.innerHeight;
+        const headerHeight = header.getBoundingClientRect().height || 0;
+        const topOffset = headerHeight + 28;
+        const cardHeight = Math.min(viewportHeight * 0.5, viewportHeight - topOffset - 28, 380);
+        viewport.style.top = `${topOffset}px`;
+        viewport.style.height = `${cardHeight}px`;
+        stack.style.height = `${cardHeight}px`;
+
+        const total = cards.length;
+        const rect = container.getBoundingClientRect();
+        const sectionTop = window.scrollY + rect.top;
+        const start = sectionTop;
+        const end = sectionTop + viewportHeight * (total * 3.2 + 1.2);
+        const progress = Math.min(Math.max((window.scrollY - start) / Math.max(end - start, 1), 0), 1);
+
+        cards.forEach((card, index) => {
+          if (index === 0) {
+            card.style.transform = "translateY(0)";
+            return;
+          }
+          const s = (index - 1) / (total - 1);
+          const e = index / (total - 1);
+          let t = (progress - s) / Math.max(e - s, 0.0001);
+          t = Math.min(Math.max(t, 0), 1);
+          card.style.transform = `translateY(calc((1 - ${t}) * 140%))`;
+        });
+      };
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      onScroll();
+    });
+  } else if (isMobile() && prefersReduced()) {
+    mobileContainers.forEach((container) => {
+      const header = container.querySelector("[data-sectors-header]");
+      const stage = container.querySelector("[data-sectors-stage]");
+      const cards = Array.from(container.querySelectorAll("[data-sectors-card]"));
+      if (!header || !stage || cards.length === 0) return;
+      const viewportHeight = window.innerHeight;
+      const headerHeight = header.getBoundingClientRect().height || 0;
+      const topOffset = Math.max(headerHeight + 8, 72);
+      const cardHeight = Math.min(viewportHeight - topOffset - 12, 280);
+      stage.style.setProperty("--mobile-top-offset", `${topOffset}px`);
+      stage.style.setProperty("--mobile-card-height", `${cardHeight}px`);
+      cards.forEach((card, index) => {
+        card.style.zIndex = String(10 + index);
+        card.style.setProperty("--card-progress", "1");
+      });
+    });
+  }
+</script>
+
 <style>
-  .sector {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    text-align: left;
+  .sectors-desktop {
+    display: none;
   }
 
-  .sector__icon {
+    #sectores .sectors-desktop .container {
+      max-width: 100%;
+      padding-inline: 0;
+      width: 100%;
+    }
+
+  .sectors-mobile {
+    display: block;
+    position: relative;
+  }
+
+  .sectors-mobile__pin {
+    position: relative;
+    height: calc(100svh * 15.5);
+  }
+
+  .sectors-mobile__header {
+    position: sticky;
+    top: calc(var(--header-height, 3.5rem));
+    z-index: 70;
+    padding-top: clamp(0.75rem, 4vw, 1.5rem);
+    padding-bottom: var(--space-3);
+    background: linear-gradient(to bottom, var(--color-bg) 0%, var(--color-bg) 88%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  .sectors-mobile__header-inner {
+    max-width: 38rem;
+    margin-inline: auto;
+    text-align: center;
+    padding-inline: var(--space-4);
+    padding-bottom: 43px;
+  }
+
+  .sectors-mobile__viewport {
+    position: sticky;
+    margin-inline: clamp(1rem, 5vw, 1.25rem);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    z-index: 40;
+    box-shadow: 0 20px 40px -24px rgba(11, 28, 46, 0.6);
+    
+  }
+
+  .sectors-mobile__stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sectors-mobile__card {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    isolation: isolate;
+    transform: translateY(130%);
+    will-change: transform;
+  }
+
+  .sectors-mobile__card:first-child {
+    transform: translateY(0);
+  }
+
+  .sectors-mobile__card-media {
+    position: absolute;
+    inset: 0;
+    background: var(--brand-900);
+  }
+
+  .sectors-mobile__card-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sectors-mobile__card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.55) 55%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+  }
+
+  .sectors-mobile__card-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    padding: clamp(1rem, 5vw, 1.25rem);
+    z-index: 1;
+    gap: var(--space-2);
+  }
+
+  .sectors-mobile__card-number {
+    position: absolute;
+    top: clamp(0.85rem, 4vw, 1rem);
+    left: clamp(1rem, 5vw, 1.25rem);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 1;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--brand-900);
+  }
+
+  .sectors-mobile__card-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: min(90vw, 32rem);
+  }
+
+  .sectors-mobile__card-title {
+    color: var(--white);
+    font-size: clamp(1.15rem, 5vw, 1.35rem);
+    margin: 0;
+    text-shadow: 0 2px 24px rgba(11, 28, 46, 0.5);
+  }
+
+  .sectors-mobile__card-description {
+    color: var(--white);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    margin: 0;
+    text-shadow: 0 2px 22px rgba(11, 28, 46, 0.6);
+  }
+
+  .sectors-mobile__card-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3.25rem;
-    height: 3.25rem;
-    border-radius: var(--radius-md);
-    background: linear-gradient(140deg, var(--brand-600), var(--accent-500));
-    color: var(--white);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .sector h3 {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .sector p {
+    margin-top: var(--space-3);
+    padding: 0.55rem 1.1rem;
     font-size: var(--text-sm);
-    color: var(--color-muted);
+    font-weight: var(--font-weight-semibold);
+    color: var(--white);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--radius-pill);
+    background: rgba(18, 44, 69, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: transform var(--transition), background-color var(--transition), border-color var(--transition);
+    align-self: flex-start;
+  }
+
+  .sectors-mobile__card-cta:hover,
+  .sectors-mobile__card-cta:focus-visible {
+    background: rgba(18, 44, 69, 0.9);
+    border-color: var(--white);
+    transform: translateY(-1px);
+  }
+
+  .sectors-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    height: clamp(20rem, 50vw, 26rem);
+  }
+
+  @media (min-width: 768px) {
+    .sectors-mobile {
+      display: none;
+    }
+
+    .sectors-desktop {
+      display: block;
+    }
+
+    .sectors-accordion {
+      flex-direction: row;
+      height: clamp(22rem, 54vw, 28rem);
+      width: 100%;
+    }
+  }
+
+  .sector-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 3.5rem;
+    min-width: 0;
+    border-radius: 0;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+    transition: flex 420ms var(--ease);
+    outline: none;
+    will-change: flex;
+  }
+
+  .sector-panel:first-child {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .sector-panel:last-child {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  @media (min-width: 768px) {
+    .sector-panel {
+      border-radius: 0;
+    }
+
+    .sector-panel:first-child {
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
+
+    .sector-panel:last-child {
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    }
+  }
+
+  .sector-panel:focus-visible {
+    box-shadow: 0 0 0 3px var(--accent-500);
+  }
+
+  .sector-panel.is-active {
+    flex: 2.8 1 0%;
+  }
+
+  @media (min-width: 1100px) {
+    .sector-panel.is-active {
+      flex: 3 1 0%;
+    }
+  }
+
+  .sector-panel__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--brand-900);
+    z-index: 0;
+  }
+
+  .sector-panel__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 420ms var(--ease);
+    will-change: transform;
+  }
+
+  .sector-panel.is-active .sector-panel__media :global(img) {
+    transform: scale(1.02);
+  }
+
+  .sector-panel__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.55) 55%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+    transition: background 320ms var(--ease);
+  }
+
+  .sector-panel.is-active .sector-panel__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.5) 55%,
+      rgba(0, 0, 0, 0.82) 100%
+    );
+  }
+
+  .sector-panel__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: 100%;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    z-index: 1;
+    gap: var(--space-2);
+  }
+
+  .sector-panel__number {
+    position: absolute;
+    top: clamp(0.9rem, 2.5vw, 1.25rem);
+    left: clamp(1rem, 2.5vw, 1.5rem);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 1;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--brand-900);
+  }
+
+  .sector-panel__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+    max-width: min(32rem, 92%);
+  }
+
+  .sector-panel__title {
+    color: var(--white);
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    margin: 0;
+    text-shadow: 0 2px 24px rgba(11, 28, 46, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sector-panel.is-active .sector-panel__title {
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    white-space: normal;
+  }
+
+  .sector-panel__description {
+    color: var(--white);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    margin: 0;
+    text-shadow: 0 2px 22px rgba(11, 28, 46, 0.6);
+    display: -webkit-box;
+    -webkit-line-clamp: 0;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 280ms var(--ease), max-height 420ms var(--ease);
+  }
+
+  .sector-panel.is-active .sector-panel__description {
+    opacity: 1;
+    max-height: 12rem;
+    -webkit-line-clamp: 4;
+  }
+
+  .sector-panel__cta {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-4);
+    padding: 0.6rem 1.25rem;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--white);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--radius-pill);
+    background: rgba(18, 44, 69, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: transform var(--transition), background-color var(--transition), border-color var(--transition);
+    align-self: flex-start;
+  }
+
+  .sector-panel.is-active .sector-panel__cta {
+    display: inline-flex;
+  }
+
+  .sector-panel__cta:hover,
+  .sector-panel__cta:focus-visible {
+    background: rgba(18, 44, 69, 0.9);
+    border-color: var(--white);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 767px) {
+    .sectors-stack {
+      height: calc(100svh * 4.6);
+    }
+
+    .sectors-stack__track {
+      position: sticky;
+      top: calc(var(--header-height, 3.5rem) + 0.5rem);
+      height: min(calc(100svh - var(--header-height, 3.5rem) - 1rem), 26rem);
+    }
+
+    .sectors-accordion {
+      height: 100%;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .sector-panel {
+      position: absolute;
+      inset: 0;
+      flex: 0 0 auto;
+      height: 100%;
+      border-radius: var(--radius-lg);
+      cursor: default;
+      transition: none;
+      transform: translateY(calc((1 - var(--stack-progress, 0)) * 110%));
+      will-change: transform;
+    }
+
+    .sector-panel.is-sticky:first-child {
+      transform: translateY(0);
+    }
+
+    .sector-panel.is-sticky:not(:first-child) {
+      transform: translateY(calc((1 - var(--stack-progress, 0)) * 115%));
+    }
+
+    .sector-panel.is-active {
+      flex: 0 0 auto;
+    }
+
+    .sector-panel__title {
+      white-space: normal;
+    }
+
+    .sector-panel__description {
+      -webkit-line-clamp: 3;
+      opacity: 0;
+      max-height: 0;
+      transition: opacity 280ms var(--ease), max-height 420ms var(--ease);
+    }
+
+    .sector-panel.is-sticky .sector-panel__description {
+      opacity: 1;
+      max-height: 12rem;
+      -webkit-line-clamp: 4;
+    }
+
+    .sector-panel:first-child {
+      border-radius: var(--radius-lg);
+    }
+
+    .sector-panel:last-child {
+      border-radius: var(--radius-lg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sector-panel,
+    .sector-panel__media :global(img),
+    .sector-panel__overlay,
+    .sector-panel__description,
+    .sectors-mobile__card {
+      transition: none;
+      transform: none;
+    }
   }
 </style>

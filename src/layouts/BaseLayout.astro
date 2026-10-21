@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { Font } from "astro:assets";
 import { getImage } from "astro:assets";
 import faviconLogo from "../assets/logo12.png";
 import { site, siteUrl, contact, services } from "../data/site";
@@ -56,12 +57,21 @@ const organizationSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
+    <Font cssVariable="--font-ibm-plex-sans" preload />
+
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical.href} />
 
-    <link rel="icon" type="image/png" href={favicon.src} sizes="32x32" />
+    <link
+      rel="icon"
+      type="image/png"
+      href={favicon.src}
+      sizes="32x32"
+      id="site-favicon"
+      data-anim-src={appleTouchIcon.src}
+    />
     <link rel="apple-touch-icon" href={appleTouchIcon.src} />
     <meta name="theme-color" content={site.themeColor} />
 
@@ -86,4 +96,158 @@ const organizationSchema = {
     <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
     <slot />
   </body>
+
+  <script>
+    // Brillo único sobre la esfera del favicon (logo12.png).
+    // Los navegadores no animan favicons estáticos (GIF/SVG/SMIL en Chrome/Edge
+    // se rasterizan fijos), así que se pintan frames en canvas y se cambia el
+    // <link rel="icon"> como hacen las libs de favicon animado. Una sola
+    // pasada de 5s: 0–1s estático, 1–3s los brillos viajan, 3–4s se desvanecen,
+    // 4–5s estático (se restaura el PNG original). Sin JS o con
+    // prefers-reduced-motion, el favicon queda como siempre.
+    const animLink = document.getElementById("site-favicon");
+
+    if (
+      animLink &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      const SIZE = 128;
+      // Cover-crop cuadrado del original 553x432 (misma fórmula que genera
+      // Astro el favicon 32x32 con fit:"cover"): lado 432, offset x 60.5.
+      const CROP = { x: 60.5, y: 0, side: 432 };
+      // Esfera medida en logo12.png: bbox opaco (72,51)-(442,420)
+      // → centro (257, 235.5), radio 185.5 (coordenadas del PNG original).
+      const SPHERE = { cx: 257, cy: 235.5, r: 185.5 };
+      const T_STATIC = 1000;
+      const T_END = 4000;
+      const FRAME_MS = 33;
+
+      const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+      const easeOut = (u: number) => 1 - Math.pow(1 - u, 3);
+      const alphaAt = (u: number) =>
+        u <= 0 || u >= 1
+          ? 0
+          : u < 0.35
+            ? u / 0.35
+            : u < 0.62
+              ? 1
+              : (1 - u) / 0.38;
+
+      type Glint = {
+        rgb: [number, number, number];
+        rx: number;
+        ry: number;
+        peak: number;
+        delay: number;
+        from: [number, number];
+        dist: number;
+        angle: number;
+      };
+
+      const GLINTS: Glint[] = [
+        {
+          rgb: [255, 255, 255],
+          rx: 0.3,
+          ry: 0.12,
+          peak: 0.7,
+          delay: 0,
+          from: [-0.45, 0.3],
+          dist: 0.8,
+          angle: -32,
+        },
+        {
+          rgb: [163, 199, 247],
+          rx: 0.18,
+          ry: 0.08,
+          peak: 0.5,
+          delay: 250,
+          from: [-0.18, 0.44],
+          dist: 0.7,
+          angle: -30,
+        },
+      ];
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const k = SIZE / CROP.side;
+        const cx = (SPHERE.cx - CROP.x) * k;
+        const cy = (SPHERE.cy - CROP.y) * k;
+        const r = SPHERE.r * k;
+
+        const original = animLink!;
+        let dyn: HTMLLinkElement | null = null;
+        let lastFrame = 0;
+        const t0 = performance.now();
+
+        const drawFrame = (t: number) => {
+          ctx.clearRect(0, 0, SIZE, SIZE);
+          ctx.drawImage(img, 0, 0, SIZE, SIZE);
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.clip();
+          for (const g of GLINTS) {
+            const span = T_END - T_STATIC - g.delay;
+            const u = (t - T_STATIC - g.delay) / span;
+            const a = alphaAt(u);
+            if (a <= 0) continue;
+            const travel = easeOut(clamp01(u / 0.8));
+            const rad = (g.angle * Math.PI) / 180;
+            const px =
+              SPHERE.cx + (g.from[0] + Math.cos(rad) * g.dist * travel) * SPHERE.r;
+            const py =
+              SPHERE.cy + (g.from[1] + Math.sin(rad) * g.dist * travel) * SPHERE.r;
+            const rx = g.rx * r;
+            ctx.save();
+            ctx.translate((px - CROP.x) * k, (py - CROP.y) * k);
+            ctx.rotate(rad);
+            ctx.scale(1, g.ry / g.rx);
+            const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+            const [R, G, B] = g.rgb;
+            const peak = (g.peak * a).toFixed(3);
+            grad.addColorStop(0, `rgba(${R},${G},${B},${peak})`);
+            grad.addColorStop(1, `rgba(${R},${G},${B},0)`);
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(0, 0, rx, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+          ctx.restore();
+        };
+
+        const tick = (now: number) => {
+          const t = now - t0;
+          if (t >= T_END) {
+            // 4–5s: se restaura el favicon original y termina (una sola vez).
+            if (dyn) dyn.replaceWith(original);
+            return;
+          }
+          if (t >= T_STATIC && now - lastFrame >= FRAME_MS) {
+            lastFrame = now;
+            if (!dyn) {
+              dyn = document.createElement("link");
+              dyn.rel = "icon";
+              dyn.type = "image/png";
+              dyn.id = "site-favicon-anim";
+              original.replaceWith(dyn);
+            }
+            drawFrame(t);
+            dyn.href = canvas.toDataURL("image/png");
+          }
+          requestAnimationFrame(tick);
+        };
+
+        requestAnimationFrame(tick);
+      };
+      const animSrc = animLink.dataset.animSrc;
+      if (animSrc) img.src = animSrc;
+    }
+  </script>
 </html>

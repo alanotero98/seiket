@@ -1,160 +1,684 @@
 ---
 import { Image } from "astro:assets";
-import Section from "./ui/Section.astro";
 import Icon from "./ui/Icon.astro";
 import { about } from "../data/site";
-import aboutIllustration from "../assets/cleaning.jpg";
+import aeronautica from "../assets/corporativo.jpg";
+import cleaning from "../assets/oficina.jpg";
+import paneles from "../assets/panelessolares.avif";
+import industrial from "../assets/facilityservices.png";
+import equipo from "../assets/nosotros.jpg";
+
+const pilares = [
+  {
+    icon: "badge",
+    title: "Calidad y mejora continua",
+    description: "Procesos documentados.",
+  },
+  ...about.values,
+];
+
+const gallery = [
+  {
+    src: aeronautica,
+    alt: "Limpieza técnica del fuselaje de una aeronave.",
+    tag: "Technical precision",
+    variant: "a",
+    class: "about__shot--a",
+  },
+  {
+    src: cleaning,
+    alt: "Limpieza industrial en fábricas y galpones.",
+    tag: "Industrial cleaning",
+    variant: "b",
+    class: "about__shot--b",
+  },
+  {
+    src: paneles,
+    alt: "Instalación fotovoltaica de gran escala con paneles solares.",
+    tag: "Energía y renovables",
+    variant: "c",
+    class: "about__shot--c",
+  },
+  {
+    src: industrial,
+    alt: "Interior de una nave industrial de grandes dimensiones.",
+    tag: "Facility services",
+    variant: "d",
+    class: "about__shot--d",
+  },
+];
 ---
 
-<Section id="nosotros" tone="surface" labelledby="nosotros-title">
-  <div class="about">
-    <div class="about__visual">
-      <Image
-        src={aboutIllustration}
-        alt="Ilustración de edificios corporativos que representan la gestión integral de instalaciones."
-        width={640}
-        height={480}
-        loading="lazy"
-        decoding="async"
-        class="about__image"
-      />
-      <div class="about__badge">
-        <span class="about__badge-icon"><Icon name="badge" size={20} /></span>
-        <span>
-          <strong>Calidad y mejora continua</strong>
-          <small>Procesos documentados</small>
-        </span>
+<section id="nosotros" class="about" data-about-reveal aria-labelledby="nosotros-title">
+  <!-- Bloque superior: hero editorial sobre fondo blanco -->
+  <div class="about__top">
+    <div class="about__track">
+      <div class="container about__stage">
+      <div class="about__gallery" aria-hidden="false">
+        {
+          gallery.map((item, index) => (
+            <figure
+              class:list={["about__shot", item.class]}
+              data-reveal-shot
+              style={`--i: ${index}`}
+            >
+              <Image
+                src={item.src}
+                alt={item.alt}
+                widths={[400, 640]}
+                sizes="(max-width: 900px) 45vw, 26vw"
+                loading="lazy"
+                decoding="async"
+                class="about__shot-img"
+              />
+              <figcaption class="about__shot-tag">{item.tag}</figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <header class="about__intro" data-reveal-intro>
+        <p class="eyebrow">Nosotros</p>
+        <h2 id="nosotros-title" class="about__headline">
+          Innovación que transforma <span>cada superficie</span>
+        </h2>
+        <p class="about__lede">
+          Servicios integrales de limpieza y mantenimiento técnico para proteger activos,
+          optimizar instalaciones y responder a los desafíos de cada entorno.
+        </p>
+        </header>
       </div>
     </div>
 
-    <div class="about__content">
-      <p class="eyebrow">{about.eyebrow}</p>
-      <h2 id="nosotros-title">{about.title}</h2>
-      {about.paragraphs.map((paragraph) => <p class="about__text">{paragraph}</p>)}
-
-      <ul class="about__values">
-        {
-          about.values.map((value) => (
-            <li class="about__value">
-              <span class="icon-badge">
-                <Icon name={value.icon} size={22} />
-              </span>
-              <div>
-                <h3>{value.title}</h3>
-                <p>{value.description}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
+    <!-- Divisor orgánico SVG: transición blanco → azul marino -->
+    <div class="about__divider" aria-hidden="true">
+      <svg viewBox="0 0 1440 140" preserveAspectRatio="none" focusable="false">
+        <path d="M0 140V56C240 8 520 4 760 46s440 92 680 52v42Z" fill="#0D233A" />
+      </svg>
     </div>
   </div>
-</Section>
+
+  <!-- Bloque inferior: confianza y filosofía sobre azul marino -->
+  <div class="about__bottom">
+    <div class="container about__bottom-grid">
+      <div class="about__figure" data-reveal-item style="--i: 0">
+        <Image
+          src={equipo}
+          alt="Profesional de SEIKET durante una intervención de mantenimiento técnico."
+          widths={[420, 640]}
+          sizes="(max-width: 900px) 100vw, 40vw"
+          loading="lazy"
+          decoding="async"
+          class="about__figure-img"
+        />
+      </div>
+
+      <div class="about__philosophy">
+        <div class="about__philosophy-head" data-reveal-item style="--i: 1">
+          <p class="eyebrow about__eyebrow-dark">Nuestros pilares</p>
+          <h3 class="about__subtitle">La excelencia está en cómo trabajamos</h3>
+          <blockquote class="about__quote">
+            La precisión no es un detalle. Es <span>el estándar de cada intervención</span>.
+          </blockquote>
+        </div>
+
+        <ul class="about__pilares">
+          {
+            pilares.map((pillar, index) => (
+              <li class="about__pilar" data-reveal-item style={`--i: ${index + 2}`}>
+                <span class="about__pilar-icon" aria-hidden="true">
+                  <Icon name={pillar.icon} size={20} />
+                </span>
+                <div class="about__pilar-body">
+                  <h4>{pillar.title}</h4>
+                  <p>{pillar.description}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Revelado progresivo (galería, encabezado e inferiores) una sola vez.
+  // Sin JS o con prefers-reduced-motion el contenido queda visible tal cual.
+  const root = document.querySelector<HTMLElement>("[data-about-reveal]");
+
+  if (
+    root &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    "IntersectionObserver" in window
+  ) {
+    root.setAttribute("data-reveal-ready", "");
+
+    const reveal = (selector: string, stagger: number) => {
+      const items = Array.from(root.querySelectorAll<HTMLElement>(selector));
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const target = entry.target as HTMLElement;
+            target.style.transitionDelay = `${
+              Number(getComputedStyle(target).getPropertyValue("--i")) * stagger
+            }ms`;
+            target.classList.add("is-visible");
+            observer.unobserve(target);
+          }
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+      );
+      for (const item of items) observer.observe(item);
+    };
+
+    reveal("[data-reveal-shot]", 90);
+    reveal("[data-reveal-intro]", 0);
+
+    const bottom = root.querySelector<HTMLElement>(".about__bottom");
+    if (bottom) {
+      const bottomObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const targets = Array.from(
+              bottom.querySelectorAll<HTMLElement>("[data-reveal-item]"),
+            );
+            for (const target of targets) {
+              target.style.transitionDelay = `${
+                Number(getComputedStyle(target).getPropertyValue("--i")) * 110
+              }ms`;
+              target.classList.add("is-visible");
+            }
+            bottomObserver.disconnect();
+          }
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -12% 0px" },
+      );
+      bottomObserver.observe(bottom);
+    }
+  }
+</script>
 
 <style>
   .about {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    gap: clamp(2rem, 5vw, 4rem);
-    align-items: center;
+    --about-navy: #0d233a;
   }
 
-  .about__visual {
+  /* ----------------------------------------------------------------------
+     Bloque superior: hero editorial
+     ---------------------------------------------------------------------- */
+  .about__top {
+    position: relative;
+    background: var(--white);
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .about__stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: clamp(27rem, 56vw, 42rem);
+    padding-block: clamp(2rem, 6vw, 5rem);
+  }
+
+  /* Galería: posicionamiento absoluto sólo en desktop; en mobile pasa a flujo. */
+  .about__gallery {
+    display: contents;
+  }
+
+  .about__shot {
+    margin: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
     position: relative;
   }
 
-  .about__image {
+  .about__shot-img {
+    display: block;
     width: 100%;
-    height: auto;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-md);
+    height: 100%;
+    object-fit: cover;
   }
 
-  .about__badge {
+  .about__shot-tag {
     position: absolute;
-    bottom: -1rem;
-    right: -1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: 0.85rem 1.1rem;
-    background: var(--white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    left: 0.85rem;
+    bottom: 0.85rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.72rem;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em;
+    color: var(--white);
+    background: rgba(13, 35, 58, 0.62);
+    backdrop-filter: blur(6px);
+    border-radius: var(--radius-pill);
   }
 
-  .about__badge-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: var(--radius-md);
-    background: var(--brand-50);
+  /* Titular: dominante, centrado. El ancho se limita para dejar carriles
+     laterales libres para la galería flotante. */
+  .about__intro {
+    position: relative;
+    z-index: 2;
+    max-width: 46rem;
+    text-align: center;
+    margin-block: auto;
+  }
+
+  .about__headline {
+    font-size: clamp(2.4rem, 5.4vw + 0.4rem, 5rem);
+    font-weight: 800;
+    line-height: 1.03;
+    letter-spacing: -0.02em;
+    color: var(--about-navy);
+    text-wrap: balance;
+  }
+
+  .about__headline span {
     color: var(--color-primary);
   }
 
-  .about__badge span:last-child {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.3;
-  }
-
-  .about__badge strong {
-    font-size: var(--text-sm);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .about__badge small {
-    font-size: var(--text-xs);
+  .about__lede {
+    max-width: 40rem;
+    margin: clamp(1.25rem, 2.5vw, 1.75rem) auto 0;
+    font-size: var(--text-lg);
+    line-height: 1.7;
     color: var(--color-muted);
   }
 
-  .about__text {
-    margin-top: var(--space-4);
-    color: var(--color-muted);
+  /* ----------------------------------------------------------------------
+     Divisor orgánico
+     ---------------------------------------------------------------------- */
+.about__divider {
+    line-height: 0;
+    margin-top: calc(-1 * clamp(1rem, 3vw, 2.5rem));
+    margin-bottom: -2px; /* Margen negativo para solapar la sección de abajo */
+    position: relative;
+    z-index: 2;
+}
+
+.about__divider svg {
+    display: block;
+    width: 100%;
+    height: clamp(70px, 9vw, 140px);
+    /* Solo lo empujamos 1px hacia abajo y lo estiramos un poquito SOLO en la altura, dejando el ancho intacto a 100% */
+    transform: translateY(1px) scaleY(1.02); 
+    transform-origin: bottom; /* Asegura que crezca hacia abajo para tapar la línea */
+}
+
+  /* ----------------------------------------------------------------------
+     Bloque inferior
+     ---------------------------------------------------------------------- */
+  .about__bottom {
+    background: var(--about-navy);
+    color: var(--color-on-dark);
+    padding-block: clamp(3rem, 7vw, 6rem);
   }
 
-  .about__values {
+  .about__bottom-grid {
     display: grid;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
   }
 
-  .about__value {
+  .about__figure {
+    margin: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    max-width: 24rem;
+  }
+
+  .about__figure-img {
+    display: block;
+    width: 100%;
+    height: 550px;
+    
+    object-fit: cover;
+  }
+
+  .about__eyebrow-dark {
+    color: var(--accent-400);
+  }
+
+  .about__eyebrow-dark::before {
+    background: var(--accent-400);
+  }
+
+  .about__subtitle {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--white);
+    text-wrap: balance;
+  }
+
+  .about__quote {
+    margin: clamp(1.25rem, 3vw, 2rem) 0 0;
+    font-size: clamp(1.25rem, 1.6vw + 0.9rem, 1.75rem);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--color-on-dark);
+    text-wrap: balance;
+  }
+
+  .about__quote span {
+    color: var(--accent-400);
+  }
+
+  .about__pilares {
+    display: grid;
+    gap: 0;
+    margin: clamp(2rem, 4vw, 2.75rem) 0 0;
+  }
+
+  .about__pilar {
     display: flex;
     gap: var(--space-4);
     align-items: flex-start;
+    padding-block: clamp(1rem, 2vw, 1.35rem);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
   }
 
-  .about__value .icon-badge {
-    width: 2.6rem;
-    height: 2.6rem;
+  .about__pilar:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
 
-  .about__value h3 {
+  .about__pilar-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: var(--brand-800);
+    color: var(--white);
+  }
+
+  .about__pilar-body h4 {
     font-size: var(--text-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--white);
   }
 
-  .about__value p {
+  .about__pilar-body p {
+    margin-top: var(--space-1);
     font-size: var(--text-sm);
-    color: var(--color-muted);
+    color: var(--color-on-dark-muted);
   }
 
-  @media (max-width: 860px) {
-    .about {
-      grid-template-columns: 1fr;
+  /* ----------------------------------------------------------------------
+     Revelado progresivo
+     ---------------------------------------------------------------------- */
+  .about[data-reveal-ready] [data-reveal-shot],
+  .about[data-reveal-ready] [data-reveal-intro],
+  .about[data-reveal-ready] [data-reveal-item] {
+    opacity: 0;
+    translate: 0 1.5rem;
+    transition:
+      opacity 640ms var(--ease),
+      translate 640ms var(--ease);
+  }
+
+  .about[data-reveal-ready] .is-visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* ----------------------------------------------------------------------
+     Galería flotante anclada (sólo escritorio).
+     .about__track es el riel de scroll; .about__stage es una capa sticky que
+     queda anclada al viewport mientras se recorre el riel, manteniendo las
+     cuatro imágenes (y el titular) visualmente fijos. Al agotarse el riel,
+     la capa se libera y el bloque azul marino continúa su flujo normal.
+     ---------------------------------------------------------------------- */
+  @media (min-width: 901px) {
+    .about__track {
+      /* Riel de scroll: una pantalla visible + el recorrido del anclaje. */
+      min-height: calc(100vh + 85vh);
+      view-timeline-name: --about-rail;
+      view-timeline-axis: block;
     }
 
-    .about__visual {
-      max-width: 32rem;
+    .about__stage {
+      position: sticky;
+      top: 0;
+      min-height: 0;
+      height: 100vh;
+      height: 100svh;
+      padding-block: 0;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Anclaje a pantalla completa: el stage sticky (100vh) cubre el viewport
+       durante toda la fase fija, sin asomar contenido de secciones contiguas. */
+    .about__top {
+      background: var(--white);
+    }
+
+    .about__gallery {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .about__shot {
+      position: absolute;
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    /* Posición vertical con `top` (no `translate`): la propiedad `translate`
+       está reservada por la animación de entrada del reveal. */
+    .about__shot--a {
+      left: 0;
+      top: 12%;
+      width: clamp(8rem, 12vw, 11rem);
+      aspect-ratio: 3 / 4;
+    }
+
+    .about__shot--b {
+      right: 0;
+      top: 8%;
+      width: clamp(9rem, 13vw, 12.5rem);
+      aspect-ratio: 4 / 3;
+    }
+
+    .about__shot--c {
+      left: 2%;
+      bottom: 12%;
+      width: clamp(9rem, 13vw, 12.5rem);
+      aspect-ratio: 1 / 1;
+    }
+
+    .about__shot--d {
+      right: 2%;
+      bottom: 8%;
+      width: clamp(8rem, 11.5vw, 11rem);
+      aspect-ratio: 3 / 4;
+    }
+
+    .about__intro {
+      margin: 0;
+      z-index: 2;
+    }
+  }
+
+  /* ----------------------------------------------------------------------
+     Salida suave del anclaje (scroll-driven animations).
+     Mientras el riel está fijo el contenido permanece; en el último tramo
+     del recorrido el conjunto se desvanece y se aleja levemente, de modo
+     que la liberación del sticky no sea un corte seco.
+     Sin soporte (Firefox/Safari antiguos) la sección se ve igual, sin la
+     transición extra: es una mejora progresiva.
+     ---------------------------------------------------------------------- */
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      /* Las imágenes suben y se desvanecen a lo largo del anclaje.
+         `forwards` (no `both`): antes del rango rige el revelado de entrada. */
+      .about__top .about__shot {
+        animation-name: about-shot-lift;
+        animation-duration: auto;
+        animation-fill-mode: forwards;
+        animation-timing-function: linear;
+        animation-timeline: --about-rail;
+        animation-range-start: cover 36%;
+        animation-range-end: cover 66%;
+      }
+
+      /* El titular se atenúa levemente sólo en el tramo final, antes de
+         liberarse el sticky. */
+      .about__top .about__intro {
+        animation-name: about-rail-exit;
+        animation-duration: auto;
+        animation-fill-mode: both;
+        animation-timing-function: linear;
+        animation-timeline: --about-rail;
+        animation-range-start: cover 60%;
+        animation-range-end: cover 70%;
+      }
+    }
+  }
+
+  @keyframes about-shot-lift {
+    from {
+      opacity: 1;
+      translate: 0 0;
+    }
+    to {
+      opacity: 0;
+      translate: 0 -10px;
+    }
+  }
+
+  @keyframes about-rail-exit {
+    from {
+      opacity: 1;
+      scale: 1;
+    }
+    to {
+      opacity: 0.45;
+      scale: 0.965;
+    }
+  }
+
+  /* ----------------------------------------------------------------------
+     Tablet / móvil: galería en flujo, sin superposición
+     ---------------------------------------------------------------------- */
+  @media (max-width: 900px) {
+    .about__stage {
+      min-height: 0;
+      padding-block: clamp(1.5rem, 4vw, 2.5rem);
+    }
+
+    .about__gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+      width: 100%;
+      margin-bottom: clamp(1.75rem, 5vw, 2.5rem);
+    }
+
+    .about__shot {
+      border-radius: 20px;
+    }
+
+    .about__shot--a,
+    .about__shot--c {
+      aspect-ratio: 4 / 3;
+    }
+
+    .about__shot--b,
+    .about__shot--d {
+      aspect-ratio: 3 / 4;
+    }
+
+    /* El titular va primero en móvil para asegurar la jerarquía. */
+    .about__intro {
+      order: -1;
+      margin-bottom: clamp(1.75rem, 5vw, 2.5rem);
+    }
+
+    .about__bottom-grid {
+      grid-template-columns: 1fr;
+      gap: clamp(2rem, 5vw, 3rem);
+    }
+
+    .about__figure {
+      max-width: 26rem;
       margin-inline: auto;
     }
+  }
 
-    .about__badge {
-      right: 0.5rem;
-      bottom: -1.25rem;
+  @media (max-width: 560px) {
+    .about__headline {
+      font-size: clamp(2.1rem, 9vw + 0.5rem, 3rem);
+    }
+
+    /* Dos columnas compactas para la galería en pantallas chicas */
+    .about__gallery {
+      gap: var(--space-3);
+    }
+
+    .about__shot-tag {
+      font-size: 0.66rem;
+      left: 0.6rem;
+      bottom: 0.6rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about[data-reveal-ready] [data-reveal-shot],
+    .about[data-reveal-ready] [data-reveal-intro],
+    .about[data-reveal-ready] [data-reveal-item] {
+      opacity: 1;
+      translate: none;
+      transition: none;
+    }
+  }
+
+  /* Con movimiento reducido se desactiva el anclaje sticky: la sección vuelve
+     a una sola pantalla y las imágenes quedan en su posición estática. */
+  @media (min-width: 901px) and (prefers-reduced-motion: reduce) {
+    .about__track {
+      min-height: 0;
+    }
+
+    .about__stage {
+      position: relative;
+      top: auto;
+      height: auto;
+      min-height: clamp(27rem, 56vw, 42rem);
+      padding-block: clamp(2rem, 6vw, 5rem);
+      overflow: visible;
+    }
+
+    .about__shot {
+      position: absolute;
+    }
+
+    .about__shot--a {
+      top: 6%;
+    }
+
+    .about__shot--b {
+      top: 4%;
+    }
+
+    .about__shot--c {
+      top: auto;
+      bottom: 8%;
+    }
+
+    .about__shot--d {
+      top: auto;
+      bottom: 6%;
     }
   }
 </style>

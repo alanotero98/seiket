@@ -1,0 +1,539 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./ui/Icon.astro";
+import { heroCarousel, type HeroSlide } from "../data/site";
+
+interface Props {
+  slides?: HeroSlide[];
+  /** Intervalo de autoplay en milisegundos. */
+  interval?: number;
+  /** Etiqueta accesible del carrusel. */
+  label?: string;
+}
+
+const {
+  slides = heroCarousel.slides,
+  interval = heroCarousel.interval,
+  label = heroCarousel.label,
+} = Astro.props;
+
+const total = slides.length;
+
+if (total === 0) {
+  throw new Error("HeroCarousel necesita al menos una diapositiva.");
+}
+---
+
+<section
+  class="hero-carousel"
+  data-hero-carousel
+  data-interval={interval}
+  role="region"
+  aria-roledescription="carrusel"
+  aria-label={label}
+>
+  <div class="hero-carousel__media">
+    {
+      slides.map((slide, index) => (
+        <div
+          class:list={["hero-carousel__slide", { "is-active": index === 0 }]}
+          data-slide
+          data-title={slide.title}
+          data-description={slide.description}
+          role="group"
+          aria-roledescription="diapositiva"
+          aria-label={`${index + 1} de ${total}: ${slide.title}`}
+          aria-hidden={index === 0 ? "false" : "true"}
+          inert={index !== 0}
+        >
+          <Image
+            class="hero-carousel__image"
+            src={slide.image}
+            alt={slide.imageAlt}
+            widths={[640, 960, 1280, 1920]}
+            sizes="100vw"
+            priority={index === 0}
+            style={slide.focalPoint ? `object-position: ${slide.focalPoint}` : undefined}
+          />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="hero-carousel__overlay" aria-hidden="true"></div>
+
+  <div class="hero-carousel__inner">
+    <div class="hero-carousel__content" data-hero-content>
+      <h1 class="hero-carousel__title" data-hero-title>{slides[0].title}</h1>
+      <p class="hero-carousel__text" data-hero-text>{slides[0].description}</p>
+    </div>
+  </div>
+
+  <button
+    class="hero-carousel__arrow hero-carousel__arrow--prev"
+    type="button"
+    data-hero-prev
+    aria-label="Diapositiva anterior"
+  >
+    <Icon name="arrow-right" size={26} />
+  </button>
+
+  <button
+    class="hero-carousel__arrow hero-carousel__arrow--next"
+    type="button"
+    data-hero-next
+    aria-label="Diapositiva siguiente"
+  >
+    <Icon name="arrow-right" size={26} />
+  </button>
+
+  <div class="hero-carousel__dots" role="group" aria-label="Seleccionar diapositiva">
+    {
+      slides.map((slide, index) => (
+        <button
+          class="hero-carousel__dot"
+          type="button"
+          data-hero-dot={index}
+          aria-label={`Ir a la diapositiva ${index + 1}: ${slide.title}`}
+          aria-current={index === 0 ? "true" : "false"}
+        />
+      ))
+    }
+  </div>
+</section>
+
+<div class="hero-carousel__curve" aria-hidden="true">
+  <svg viewBox="0 0 1440 140" preserveAspectRatio="none" focusable="false">
+    <path d="M0 140V56C240 8 520 4 760 46s440 92 680 52v42Z" fill="var(--color-surface)"
+    ></path>
+  </svg>
+</div>
+
+<style>
+  .hero-carousel {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    background-color: var(--brand-950);
+    color: var(--white);
+  }
+
+  /* Imágenes de fondo */
+  .hero-carousel__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-carousel__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s var(--ease);
+  }
+
+  .hero-carousel__slide.is-active {
+    z-index: 1;
+    opacity: 1;
+  }
+
+  .hero-carousel__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1);
+    animation: hero-kenburns 7s ease-out forwards;
+    animation-play-state: paused;
+    will-change: transform;
+  }
+
+  .hero-carousel__slide.is-active .hero-carousel__image {
+    animation-play-state: running;
+  }
+
+  @keyframes hero-kenburns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.12);
+    }
+  }
+
+  /* Overlay oscuro para legibilidad */
+  .hero-carousel__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(8, 20, 33, 0.92) 0%,
+        rgba(8, 20, 33, 0.78) 38%,
+        rgba(8, 20, 33, 0.42) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(8, 20, 33, 0.35) 0%,
+        rgba(8, 20, 33, 0) 30%,
+        rgba(8, 20, 33, 0.4) 58%,
+        rgba(8, 20, 33, 0.92) 84%,
+        #091727 96%
+      );
+  }
+
+  /* Curva orgánica de transición hacia la sección de servicios */
+  .hero-carousel__curve {
+    display: block;
+    line-height: 0;
+    pointer-events: none;
+    background-color: #091727;
+    margin-bottom: -2px; /* Solapa con la sección siguiente para tapar la costura */
+  }
+
+  .hero-carousel__curve svg {
+    display: block;
+    width: 100%;
+    height: clamp(70px, 9vw, 140px);
+  }
+
+  /* Contenido */
+  .hero-carousel__inner {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+    padding-block: clamp(4.5rem, 12vh, 8rem);
+  }
+
+  .hero-carousel__content {
+    max-width: 46rem;
+    transition:
+      opacity 250ms var(--ease),
+      transform 250ms var(--ease);
+  }
+
+  .hero-carousel__content.is-fading {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .hero-carousel__title {
+    font-size: clamp(2.1rem, 5.2vw, 4.5rem);
+    line-height: 1.05;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.02em;
+    color: var(--white);
+    text-wrap: balance;
+  }
+
+  .hero-carousel__text {
+    margin-top: var(--space-5);
+    max-width: 40rem;
+    font-size: clamp(1rem, 1.1vw + 0.8rem, 1.35rem);
+    line-height: 1.6;
+    color: var(--color-on-dark-muted);
+    text-wrap: pretty;
+  }
+
+  /* Flechas */
+  .hero-carousel__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition:
+      background-color var(--transition),
+      border-color var(--transition),
+      transform var(--transition);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .hero-carousel__arrow:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .hero-carousel__arrow:active {
+    transform: translateY(-50%) scale(0.96);
+  }
+
+  .hero-carousel__arrow:focus-visible {
+    border-radius: 50%;
+    outline: 3px solid var(--accent-400);
+    outline-offset: 3px;
+  }
+
+  .hero-carousel__arrow--prev {
+    left: clamp(0.75rem, 2.5vw, 2rem);
+  }
+
+  .hero-carousel__arrow--next {
+    right: clamp(0.75rem, 2.5vw, 2rem);
+  }
+
+  .hero-carousel__arrow--prev :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  /* Indicadores */
+  .hero-carousel__dots {
+    position: absolute;
+    bottom: var(--space-5);
+    left: 50%;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    background: rgba(8, 20, 33, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transform: translateX(-50%);
+  }
+
+  .hero-carousel__dot {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .hero-carousel__dot::before {
+    content: "";
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    transition:
+      transform var(--transition),
+      background-color var(--transition),
+      box-shadow var(--transition);
+  }
+
+  .hero-carousel__dot:hover::before {
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  .hero-carousel__dot[aria-current="true"]::before {
+    background: var(--accent-400);
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+  }
+
+  .hero-carousel__dot:focus-visible {
+    border-radius: 50%;
+    outline: 3px solid var(--accent-400);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-carousel__inner {
+      padding-inline: clamp(2rem, 6vw, 3rem);
+    }
+
+    .hero-carousel__text {
+      line-height: 1.75;
+    }
+
+    .hero-carousel__arrow {
+      display: none;
+    }
+  }
+
+  @media (min-width: 641px) {
+    .hero-carousel__inner {
+      padding-inline: clamp(4rem, 7vw, 6rem);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-carousel__inner {
+      padding-block: 5rem 9.5rem;
+    }
+
+    .hero-carousel__title {
+      font-size: clamp(1.9rem, 8vw, 2.6rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-carousel__image {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    .hero-carousel__slide {
+      transition-duration: 0.01ms;
+    }
+
+    .hero-carousel__content {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const REDUCED_MOTION = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  function setupCarousel(root: HTMLElement): void {
+    if (root.dataset.heroCarouselReady === "true") return;
+    root.dataset.heroCarouselReady = "true";
+
+    const slides = Array.from(root.querySelectorAll<HTMLElement>("[data-slide]"));
+    if (slides.length === 0) return;
+
+    const dots = Array.from(root.querySelectorAll<HTMLElement>("[data-hero-dot]"));
+    const prevButton = root.querySelector<HTMLButtonElement>("[data-hero-prev]");
+    const nextButton = root.querySelector<HTMLButtonElement>("[data-hero-next]");
+    const content = root.querySelector<HTMLElement>("[data-hero-content]");
+    const titleElement = root.querySelector<HTMLElement>("[data-hero-title]");
+    const textElement = root.querySelector<HTMLElement>("[data-hero-text]");
+
+    const interval = Number(root.dataset.interval) || 4000;
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    let index = 0;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let textTimer: ReturnType<typeof setTimeout> | null = null;
+    let destroyed = false;
+
+    function restartZoom(slide: HTMLElement): void {
+      if (REDUCED_MOTION) return;
+      const image = slide.querySelector<HTMLImageElement>("img");
+      if (!image) return;
+      image.style.animation = "none";
+      void image.offsetWidth;
+      image.style.animation = "";
+    }
+
+    function updateText(slide: HTMLElement): void {
+      if (!slide || !titleElement) return;
+
+      const title = slide.dataset.title ?? "";
+      const description = slide.dataset.description ?? "";
+      const unchanged =
+        titleElement.textContent === title &&
+        (!textElement || textElement.textContent === description);
+
+      if (unchanged || REDUCED_MOTION || !content) {
+        titleElement.textContent = title;
+        if (textElement) textElement.textContent = description;
+        return;
+      }
+
+      content.classList.add("is-fading");
+      if (textTimer !== null) clearTimeout(textTimer);
+      textTimer = setTimeout(() => {
+        titleElement.textContent = title;
+        if (textElement) textElement.textContent = description;
+        content.classList.remove("is-fading");
+      }, 220);
+    }
+
+    function render(nextIndex: number): void {
+      index = (nextIndex + slides.length) % slides.length;
+
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle("is-active", active);
+        slide.setAttribute("aria-hidden", active ? "false" : "true");
+        slide.toggleAttribute("inert", !active);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.setAttribute("aria-current", i === index ? "true" : "false");
+      });
+
+      restartZoom(slides[index]);
+      updateText(slides[index]);
+    }
+
+    function stop(): void {
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function schedule(): void {
+      stop();
+      if (destroyed || slides.length < 2) return;
+      timer = setTimeout(() => {
+        render(index + 1);
+        schedule();
+      }, interval);
+    }
+
+    function goTo(nextIndex: number): void {
+      render(nextIndex);
+      schedule();
+    }
+
+    prevButton?.addEventListener("click", () => goTo(index - 1), { signal });
+    nextButton?.addEventListener("click", () => goTo(index + 1), { signal });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => goTo(i), { signal });
+    });
+
+    function destroy(): void {
+      if (destroyed) return;
+      destroyed = true;
+      stop();
+      if (textTimer !== null) clearTimeout(textTimer);
+      controller.abort();
+    }
+
+    document.addEventListener("astro:before-swap", destroy, { signal });
+    window.addEventListener("pagehide", destroy, { once: true });
+
+    render(0);
+    schedule();
+  }
+
+  function initCarousels(): void {
+    document
+      .querySelectorAll<HTMLElement>("[data-hero-carousel]")
+      .forEach(setupCarousel);
+  }
+
+  initCarousels();
+  document.addEventListener("astro:page-load", initCarousels);
+</script>
