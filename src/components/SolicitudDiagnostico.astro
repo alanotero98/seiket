@@ -14,7 +14,7 @@ import { diagnostico } from "../data/site";
       data-error={diagnostico.errorMessage}
     >
       <fieldset class="block">
-        <legend class="block__title">InformaciÃ³n de Contacto</legend>
+        <legend class="block__title">Información de Contacto</legend>
         <div class="grid-2">
           <div class="field">
             <label for="d-nombre">Nombre y Apellido <span aria-hidden="true">*</span></label>
@@ -22,7 +22,7 @@ import { diagnostico } from "../data/site";
               id="d-nombre"
               name="nombre"
               type="text"
-              placeholder="Ej. Juan PÃ©rez"
+              placeholder="Ej. Juan Perez"
               autocomplete="name"
               required
               aria-required="true"
@@ -37,7 +37,7 @@ import { diagnostico } from "../data/site";
               id="d-empresa"
               name="empresa"
               type="text"
-              placeholder="RazÃ³n social o nombre de fantasÃ­a"
+              placeholder="Razón social"
               autocomplete="organization"
               required
               aria-required="true"
@@ -66,10 +66,10 @@ import { diagnostico } from "../data/site";
       </fieldset>
 
       <fieldset class="block">
-        <legend class="block__title">Detalles de la InstalaciÃ³n</legend>
+        <legend class="block__title">Detalles de la Instalación</legend>
         <div class="grid-2">
           <div class="field">
-            <label for="d-tipo">Tipo de InstalaciÃ³n <span aria-hidden="true">*</span></label>
+            <label for="d-tipo">Tipo de Instalación <span aria-hidden="true">*</span></label>
             <select
               id="d-tipo"
               name="tipo"
@@ -77,14 +77,14 @@ import { diagnostico } from "../data/site";
               aria-required="true"
               aria-describedby="d-error-tipo"
             >
-              <option value="" selected disabled>Seleccione una opciÃ³n</option>
+              <option value="" selected disabled>Seleccione una opción</option>
               {diagnostico.installationTypes.map((type) => <option value={type}>{type}</option>)}
             </select>
             <p class="field__error" id="d-error-tipo" data-error-for="tipo" hidden></p>
           </div>
 
           <div class="field">
-            <label for="d-m2">Metros cuadrados aprox. (mÂ²)</label>
+            <label for="d-m2">Metros cuadrados aprox. (m²)</label>
             <input id="d-m2" name="m2" type="number" min="0" inputmode="numeric" placeholder="Ej. 1500" />
           </div>
         </div>
@@ -119,7 +119,7 @@ import { diagnostico } from "../data/site";
             placeholder="Ej.: horarios de trabajo, requisitos de seguridad, maquinaria o equipos disponibles, accesos, etc."
             aria-describedby="d-comentarios-help"></textarea>
           <p id="d-comentarios-help" class="field__help">
-            Detalles especÃ­ficos o necesidades de su empresa.
+            Detalles especi­ficos o necesidades de su empresa.
           </p>
         </div>
       </fieldset>
