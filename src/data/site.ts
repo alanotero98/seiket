@@ -12,14 +12,16 @@
 
 import type { ImageMetadata } from "astro";
 import servicio1 from "../assets/oficina.jpg";
-import servicio2 from "../assets/aeronautica.jpg";
-import servicio3 from "../assets/paneles.jpg";
+import servicio2 from "../assets/limpieza-de-obras.webp";
+import servicioAvion from "../assets/aeronautica.jpg";
+import servicio3 from "../assets/finalObra.webp";
 import servicio4 from "../assets/finalObra.webp";
 import cleaning from "../assets/industrial.jpg";
 import oficina from "../assets/corporativo.jpg";
 import industrial from "../assets/construccion.avif";
 import aeronautica from "../assets/aviones.jpg";
 import paneles from "../assets/paneles-espacio.jpg";
+import paneles2 from "../assets/paneles.jpg";
 
 export const siteUrl = import.meta.env.SITE ?? "https://seiket.example";
 
@@ -106,6 +108,15 @@ export const heroCarousel = {
         "Limpieza profesional de paneles solares fotovoltaicos.",
       focalPoint: "center",
     },
+    {
+      title: "Cada avión merece una limpieza de precisión.",
+      description:
+        "Limpieza técnica de aviones con procedimientos específicos y productos adecuados para el cuidado de sus superficies. Precisión y atención al detalle en cada intervención.",
+      image: servicioAvion,
+      imageAlt:
+        "Limpieza técnica de una aeronave con procedimientos específicos y productos adecuados.",
+      focalPoint: "center",
+    },
   ] as HeroSlide[],
 };
 
@@ -151,8 +162,8 @@ export const services: Service[] = [
     icon: "plane",
     title: "Limpieza Técnica Aeronáutica",
     description:
-      "Protocolos estrictos y productos certificados, no abrasivos, para el cuidado del fuselaje de aviones y aeronaves.",
-    image: servicio2,
+      "Protocolos estrictos y productos certificados, no abrasivos, para el cuidado del fuselaje de aviones y aeronaves.\n\nMás info",
+    image: servicioAvion,
     imageAlt:
       "Limpieza técnica del fuselaje de una aeronave con protocolos certificados.",
   },
@@ -161,7 +172,7 @@ export const services: Service[] = [
     title: "Limpieza de Paneles Solares",
     description:
       "Un panel sucio pierde eficiencia. Limpieza profesional para maximizar el rendimiento de su energía limpia.",
-    image: servicio3,
+    image: paneles2,
     imageAlt: "Limpieza profesional de paneles solares fotovoltaicos.",
   },
 ];
@@ -346,6 +357,11 @@ export const diagnostico = {
       value: "Áreas Verdes",
       title: "Áreas Verdes",
       description: "Parquización y mantenimiento de jardines y espacios exteriores.",
+    },
+    {
+      value: "Limpieza Técnica Aeronáutica",
+      title: "Limpieza Técnica Aeronáutica",
+      description: "Protocolos estrictos y productos certificados, no abrasivos, para el cuidado del fuselaje de aviones y aeronaves.",
     },
   ],
   successMessage:
