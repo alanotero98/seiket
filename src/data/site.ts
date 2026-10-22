@@ -22,6 +22,7 @@ import industrial from "../assets/construccion.avif";
 import aeronautica from "../assets/aviones.jpg";
 import paneles from "../assets/paneles-espacio.jpg";
 import paneles2 from "../assets/paneles.jpg";
+import limpFinalObra from "../assets/limp-finally-obra.webp";
 
 export const siteUrl = import.meta.env.SITE ?? "https://seiket.example";
 
@@ -154,7 +155,7 @@ export const services: Service[] = [
     title: "Limpieza Final de Obra",
     description:
       "Convertimos su obra terminada en un espacio listo para habitar o producir: casas, fábricas, galpones y locales comerciales.",
-    image: servicio4,
+    image: limpFinalObra,
     imageAlt:
       "Limpieza final de obra en un espacio listo para habitar o producir.",
   },

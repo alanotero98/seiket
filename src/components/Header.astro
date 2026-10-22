@@ -13,7 +13,7 @@ import { nav } from "../data/site";
         src={logo}
         alt=""
         class="header__logo"
-        height={480}
+        height={80}
         format="webp"
         loading="eager"
         decoding="async"
@@ -84,30 +84,22 @@ import { nav } from "../data/site";
     padding-bottom: 0;
   }
 
-  /* El logo original (2400x1792) tiene mucho padding transparente alrededor
-     de la marca (la banda visible mide ~2108x392, centrada verticalmente).
-     Agrandamos el <img> y lo recortamos con el contenedor para que la marca
-     se vea grande sin tocar el alto del header (fijo en --header-height). */
+  /* El PNG ya viene recortado a la banda visible de la marca (2112x398),
+     sin padding transparente. Se muestra a su proporción natural, con una
+     altura proporcional al header para conservar el tamaño anterior. */
   .header__brand {
     display: inline-flex;
     align-items: center;
     height: 100%;
-    overflow: hidden;
     text-decoration: none;
     border-radius: var(--radius-sm);
   }
 
   .header__logo {
     display: block;
-    height: calc(var(--header-height) * 2.6);
+    height: calc(var(--header-height) * 0.57);
     width: auto;
-    max-width: none;
-  }
-
-  @media (max-width: 640px) {
-    .header__logo {
-      height: calc(var(--header-height) * 2.3);
-    }
+    max-width: 100%;
   }
 
   .nav__list {
