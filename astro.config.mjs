@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
+import vercel from '@astrojs/vercel';
 
 // TODO: reemplazar por el dominio definitivo antes de publicar.
 // Se usa para canonical, Open Graph y sitemap (import.meta.env.SITE).
@@ -7,6 +8,8 @@ const SITE_URL = 'https://seiket.example';
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'static',
+  adapter: vercel(),
   site: SITE_URL,
   compressHTML: true,
   // Tipografía única del sitio: IBM Plex Sans (400/500/600/700).

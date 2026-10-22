@@ -49,9 +49,6 @@ export const contact = {
   whatsapp: "",
   address: "[Domicilio legal, Ciudad]",
   hours: "[Lunes a viernes de 0 a 0 hs]",
-  // Endpoint del formulario (Formspree, Netlify, backend propio, etc.).
-  // Si queda vacío, el formulario abre el cliente de correo como fallback.
-  formAction: "",
   social: [
     { label: "LinkedIn", href: "", icon: "linkedin" },
     { label: "Instagram", href: "", icon: "instagram" },

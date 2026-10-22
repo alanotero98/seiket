@@ -1,21 +1,20 @@
----
+﻿---
 import Button from "./ui/Button.astro";
-import { contact, diagnostico } from "../data/site";
+import { diagnostico } from "../data/site";
 ---
 
 <div class="solicitud">
     <form
       class="solicitud__form"
       data-diagnostico-form
-      action={contact.formAction || undefined}
+      action="/api/contact"
       method="POST"
       novalidate
-      data-mailto={contact.email}
       data-success={diagnostico.successMessage}
       data-error={diagnostico.errorMessage}
     >
       <fieldset class="block">
-        <legend class="block__title">Información de Contacto</legend>
+        <legend class="block__title">InformaciÃ³n de Contacto</legend>
         <div class="grid-2">
           <div class="field">
             <label for="d-nombre">Nombre y Apellido <span aria-hidden="true">*</span></label>
@@ -23,7 +22,7 @@ import { contact, diagnostico } from "../data/site";
               id="d-nombre"
               name="nombre"
               type="text"
-              placeholder="Ej. Juan Pérez"
+              placeholder="Ej. Juan PÃ©rez"
               autocomplete="name"
               required
               aria-required="true"
@@ -38,7 +37,7 @@ import { contact, diagnostico } from "../data/site";
               id="d-empresa"
               name="empresa"
               type="text"
-              placeholder="Razón social o nombre de fantasía"
+              placeholder="RazÃ³n social o nombre de fantasÃ­a"
               autocomplete="organization"
               required
               aria-required="true"
@@ -67,10 +66,10 @@ import { contact, diagnostico } from "../data/site";
       </fieldset>
 
       <fieldset class="block">
-        <legend class="block__title">Detalles de la Instalación</legend>
+        <legend class="block__title">Detalles de la InstalaciÃ³n</legend>
         <div class="grid-2">
           <div class="field">
-            <label for="d-tipo">Tipo de Instalación <span aria-hidden="true">*</span></label>
+            <label for="d-tipo">Tipo de InstalaciÃ³n <span aria-hidden="true">*</span></label>
             <select
               id="d-tipo"
               name="tipo"
@@ -78,14 +77,14 @@ import { contact, diagnostico } from "../data/site";
               aria-required="true"
               aria-describedby="d-error-tipo"
             >
-              <option value="" selected disabled>Seleccione una opción</option>
+              <option value="" selected disabled>Seleccione una opciÃ³n</option>
               {diagnostico.installationTypes.map((type) => <option value={type}>{type}</option>)}
             </select>
             <p class="field__error" id="d-error-tipo" data-error-for="tipo" hidden></p>
           </div>
 
           <div class="field">
-            <label for="d-m2">Metros cuadrados aprox. (m²)</label>
+            <label for="d-m2">Metros cuadrados aprox. (mÂ²)</label>
             <input id="d-m2" name="m2" type="number" min="0" inputmode="numeric" placeholder="Ej. 1500" />
           </div>
         </div>
@@ -120,7 +119,7 @@ import { contact, diagnostico } from "../data/site";
             placeholder="Ej.: horarios de trabajo, requisitos de seguridad, maquinaria o equipos disponibles, accesos, etc."
             aria-describedby="d-comentarios-help"></textarea>
           <p id="d-comentarios-help" class="field__help">
-            Detalles específicos o necesidades de su empresa.
+            Detalles especÃ­ficos o necesidades de su empresa.
           </p>
         </div>
       </fieldset>
@@ -379,13 +378,12 @@ import { contact, diagnostico } from "../data/site";
   if (form) {
     const status = form.querySelector<HTMLElement>("[data-status]");
     const endpoint = form.getAttribute("action");
-    const mailto = form.dataset.mailto ?? "";
     const successMessage = form.dataset.success ?? "Solicitud enviada.";
     const errorMessage = form.dataset.error ?? "Revisá los campos marcados.";
-    const requiredFields = ["nombre", "empresa", "email", "tipo", "tel"] as const;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const requiredFields = ["nombre", "empresa", "email", "tipo"] as const;
+    const emailPattern = /^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?)+$/i;
 
-    const setStatus = (message: string, state: "success" | "error" | "") => {
+    const setStatus = (message: string, state: "success" | "error" | "loading" | "") => {
       if (!status) return;
       status.textContent = message;
       if (state) status.dataset.state = state;
@@ -404,24 +402,13 @@ import { contact, diagnostico } from "../data/site";
 
     const validate = () => {
       let valid = true;
-
       for (const name of requiredFields) {
-        const input = form.elements.namedItem(name) as
-          | HTMLInputElement
-          | HTMLSelectElement
-          | null;
+        const input = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
         if (!input) continue;
-
         const error = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
         let message = "";
-
-        if (!input.value.trim()) {
-          message =
-            name === "tipo" ? "Seleccioná una opción." : "Este campo es obligatorio.";
-        } else if (name === "email" && !emailPattern.test(input.value.trim())) {
-          message = "Ingresá una dirección de email válida.";
-        }
-
+        if (!input.value.trim()) message = name === "tipo" ? "Seleccioná una opción." : "Este campo es obligatorio.";
+        else if (name === "email" && !emailPattern.test(input.value.trim())) message = "Ingresá una dirección de email válida.";
         if (message) {
           valid = false;
           if (error) {
@@ -429,11 +416,8 @@ import { contact, diagnostico } from "../data/site";
             error.hidden = false;
           }
           input.setAttribute("aria-invalid", "true");
-        } else {
-          clearError(name);
-        }
+        } else clearError(name);
       }
-
       return valid;
     };
 
@@ -444,53 +428,59 @@ import { contact, diagnostico } from "../data/site";
     });
 
     form.querySelectorAll<HTMLInputElement>('input[name="servicios"]').forEach((checkbox) => {
-      checkbox.addEventListener("change", () => {
-        checkbox.closest(".svc-card")?.classList.toggle("is-checked", checkbox.checked);
-      });
+      checkbox.addEventListener("change", () => checkbox.closest(".svc-card")?.classList.toggle("is-checked", checkbox.checked));
     });
 
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
       const honeypot = form.elements.namedItem("_gotcha") as HTMLInputElement | null;
-      if (honeypot && honeypot.value) {
-        event.preventDefault();
-        return;
-      }
-
+      if (honeypot?.value || !endpoint) return;
       if (!validate()) {
-        event.preventDefault();
         setStatus(errorMessage, "error");
         form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
         return;
       }
 
-      if (!endpoint) {
-        event.preventDefault();
-        const data = new FormData(form);
-        const servicios = data.getAll("servicios").join(", ") || "No especificado";
-        const subject = `Solicitud de Diagnóstico — ${data.get("empresa") ?? ""}`;
-        const bodyLines = [
-          `Nombre: ${data.get("nombre") ?? ""}`,
-          `Empresa: ${data.get("empresa") ?? ""}`,
-          `Email: ${data.get("email") ?? ""}`,
-          `Teléfono: ${data.get("tel") ?? ""}`,
-          `Tipo de instalación: ${data.get("tipo") ?? ""}`,
-          `Metros cuadrados aprox.: ${data.get("m2") ?? ""}`,
-          `Servicios de interés: ${servicios}`,
-          "",
-          "Comentarios:",
-          `${data.get("comentarios") ?? ""}`,
-        ];
-        const href = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-        window.location.href = href;
+      const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const data = new FormData(form);
+      const payload: Record<string, FormDataEntryValue | string[]> = Object.fromEntries(data.entries());
+      payload.servicios = data.getAll("servicios").map(String);
+      setStatus("Enviando tu solicitud…", "loading");
+      form.setAttribute("aria-busy", "true");
+      if (submitButton) submitButton.disabled = true;
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          for (const [name, message] of Object.entries(result.errors ?? {})) {
+            const input = form.elements.namedItem(name) as HTMLElement | null;
+            const error = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+            input?.setAttribute("aria-invalid", "true");
+            if (error) {
+              error.textContent = String(message);
+              error.hidden = false;
+            }
+          }
+          setStatus(result.message ?? "No pudimos enviar tu solicitud. Intentá nuevamente.", "error");
+          form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+          return;
+        }
+
         setStatus(successMessage, "success");
         form.reset();
-        form
-          .querySelectorAll(".svc-card.is-checked")
-          .forEach((card) => card.classList.remove("is-checked"));
-        return;
+        form.querySelectorAll(".svc-card.is-checked").forEach((card) => card.classList.remove("is-checked"));
+        requiredFields.forEach(clearError);
+      } catch {
+        setStatus("No pudimos conectar con el servicio. Revisá tu conexión e intentá nuevamente.", "error");
+      } finally {
+        form.removeAttribute("aria-busy");
+        if (submitButton) submitButton.disabled = false;
       }
-
-      setStatus(successMessage, "success");
     });
   }
 </script>
