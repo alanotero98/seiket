@@ -165,25 +165,26 @@ import { sectors } from "../data/site";
       const cards = Array.from(container.querySelectorAll("[data-sectors-card]"));
       if (!pin || !header || !viewport || !stack || cards.length === 0) return;
 
+      const total = cards.length;
+      const PER_CARD = 0.8; // pantallas de scroll por transición de tarjeta
+      const ANIM = (total - 1) * PER_CARD;
+      const HOLD = 1.4; // pantallas extra para el anclaje y la pausa final
+
+      let start = 0;
+      let end = 1;
+      let frame = 0;
+
       cards.forEach((card, index) => {
         card.style.zIndex = String(20 + index);
       });
 
-      const onScroll = () => {
-        const viewportHeight = window.innerHeight;
-        const headerHeight = header.getBoundingClientRect().height || 0;
-        const topOffset = headerHeight + 28;
-        const cardHeight = Math.min(viewportHeight * 0.5, viewportHeight - topOffset - 28, 380);
-        viewport.style.top = `${topOffset}px`;
-        viewport.style.height = `${cardHeight}px`;
-        stack.style.height = `${cardHeight}px`;
+      const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
 
-        const total = cards.length;
-        const rect = container.getBoundingClientRect();
-        const sectionTop = window.scrollY + rect.top;
-        const start = sectionTop;
-        const end = sectionTop + viewportHeight * (total * 3.2 + 1.2);
-        const progress = Math.min(Math.max((window.scrollY - start) / Math.max(end - start, 1), 0), 1);
+      const update = () => {
+        const progress = Math.min(
+          Math.max((window.scrollY - start) / Math.max(end - start, 1), 0),
+          1,
+        );
 
         cards.forEach((card, index) => {
           if (index === 0) {
@@ -193,31 +194,50 @@ import { sectors } from "../data/site";
           const s = (index - 1) / (total - 1);
           const e = index / (total - 1);
           let t = (progress - s) / Math.max(e - s, 0.0001);
-          t = Math.min(Math.max(t, 0), 1);
+          t = easeOutCubic(Math.min(Math.max(t, 0), 1));
           card.style.transform = `translateY(calc((1 - ${t}) * 140%))`;
         });
       };
 
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll, { passive: true });
-      onScroll();
+      const requestUpdate = () => {
+        if (frame) return;
+        frame = window.requestAnimationFrame(() => {
+          frame = 0;
+          update();
+        });
+      };
+
+      // El sizing y el cálculo del recorrido sólo dependen del viewport, no
+      // del scroll: se recalculan en resize, no en cada frame.
+      const measure = () => {
+        const viewportHeight = window.innerHeight;
+        const headerHeight = header.getBoundingClientRect().height || 0;
+        const topOffset = headerHeight + 28;
+        const cardHeight = Math.min(viewportHeight * 0.5, viewportHeight - topOffset - 28, 380);
+        viewport.style.top = `${topOffset}px`;
+        viewport.style.height = `${cardHeight}px`;
+        stack.style.height = `${cardHeight}px`;
+
+        // Ajusta el riel al recorrido real: una transición corta por tarjeta
+        // más una pausa final, en lugar de las 15 pantallas anteriores.
+        pin.style.height = `${viewportHeight * (ANIM + HOLD)}px`;
+
+        const rect = container.getBoundingClientRect();
+        start = window.scrollY + rect.top;
+        end = start + viewportHeight * ANIM;
+
+        update();
+      };
+
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      window.addEventListener("resize", measure, { passive: true });
+      window.addEventListener("orientationchange", measure, { passive: true });
+      measure();
     });
   } else if (isMobile() && prefersReduced()) {
+    // Sin animación: las tarjetas se apilan en flujo normal (ver CSS).
     mobileContainers.forEach((container) => {
-      const header = container.querySelector("[data-sectors-header]");
-      const stage = container.querySelector("[data-sectors-stage]");
-      const cards = Array.from(container.querySelectorAll("[data-sectors-card]"));
-      if (!header || !stage || cards.length === 0) return;
-      const viewportHeight = window.innerHeight;
-      const headerHeight = header.getBoundingClientRect().height || 0;
-      const topOffset = Math.max(headerHeight + 8, 72);
-      const cardHeight = Math.min(viewportHeight - topOffset - 12, 280);
-      stage.style.setProperty("--mobile-top-offset", `${topOffset}px`);
-      stage.style.setProperty("--mobile-card-height", `${cardHeight}px`);
-      cards.forEach((card, index) => {
-        card.style.zIndex = String(10 + index);
-        card.style.setProperty("--card-progress", "1");
-      });
+      container.classList.add("is-reduced");
     });
   }
 </script>
@@ -240,7 +260,8 @@ import { sectors } from "../data/site";
 
   .sectors-mobile__pin {
     position: relative;
-    height: calc(100svh * 15.5);
+    /* Fallback sin JS; el script lo ajusta al recorrido real de la animación. */
+    height: calc(100svh * 4);
   }
 
   .sectors-mobile__header {
@@ -669,6 +690,34 @@ import { sectors } from "../data/site";
 
     .sector-panel:last-child {
       border-radius: var(--radius-lg);
+    }
+  }
+
+  /* Sin animación en mobile: las tarjetas se muestran en flujo normal,
+     apiladas verticalmente, sin solaparse ni requerir scroll artificial. */
+  @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+    .sectors-mobile.is-reduced .sectors-mobile__pin {
+      height: auto;
+    }
+
+    .sectors-mobile.is-reduced .sectors-mobile__viewport {
+      position: static;
+      overflow: visible;
+      box-shadow: none;
+      margin-bottom: clamp(2rem, 6vw, 3rem);
+    }
+
+    .sectors-mobile.is-reduced .sectors-mobile__stack {
+      display: grid;
+      gap: var(--space-4);
+      height: auto;
+    }
+
+    .sectors-mobile.is-reduced .sectors-mobile__card {
+      position: relative;
+      inset: auto;
+      height: auto;
+      aspect-ratio: 4 / 3;
     }
   }
 
